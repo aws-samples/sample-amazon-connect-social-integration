@@ -35,7 +35,7 @@ API_CONFIG_CONTENT = {
     "body": {},
 }
 
-WALLSIO_SECRET_NAME = "wallsio-secret"
+WALLSIO_SECRET_NAME = "wallsio-secret"  # nosec B105 - secret name reference, not a password
 
 PROCESS_CONFIG_PARAM_NAME = "/config/process"
 

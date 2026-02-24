@@ -79,7 +79,7 @@ def call_api(api_config: Dict[str, Any]) -> Dict[str, Any]:
         logger.info(f"Making {method} request to {url}")
         
         # Make the request - URL scheme already validated above
-        with request.urlopen(req, timeout=30) as response:  # nosemgrep: dynamic-urllib-use-detected
+        with request.urlopen(req, timeout=30) as response:  # nosec B310 # nosemgrep: dynamic-urllib-use-detected
             response_data = response.read().decode('utf-8')
             return json.loads(response_data)
             
