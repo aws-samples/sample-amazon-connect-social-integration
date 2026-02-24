@@ -1,0 +1,165 @@
+{
+    "Records": [
+        {
+            "eventID": "e5b021d6a26ef82d282936fd515cfeeb",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-west-2",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1769492435.0,
+                "Keys": {
+                    "created_timestamp": {
+                        "N": "1765546709"
+                    },
+                    "id": {
+                        "S": "1615801034"
+                    }
+                },
+                "NewImage": {
+                    "sentiment": {
+                        "S": "positive"
+                    },
+                    "latitude": {
+                        "S": "-22.02020420000000"
+                    },
+                    "post_video": {
+                        "NULL": true
+                    },
+                    "language": {
+                        "S": "pt"
+                    },
+                    "source": {
+                        "M": {
+                            "name": {
+                                "S": "#latamairlines"
+                            },
+                            "link": {
+                                "S": "https://www.instagram.com/explore/tags/latamairlines"
+                            },
+                            "id": {
+                                "S": "416122"
+                            },
+                            "profileImage": {
+                                "NULL": true
+                            },
+                            "type": {
+                                "S": "keyword"
+                            },
+                            "value": {
+                                "S": "latamairlines"
+                            },
+                            "username": {
+                                "NULL": true
+                            }
+                        }
+                    },
+                    "type": {
+                        "S": "instagram"
+                    },
+                    "external_post_id": {
+                        "S": "5365416852_3786002663650203664"
+                    },
+                    "is_pinned": {
+                        "BOOL": false
+                    },
+                    "cta": {
+                        "NULL": true
+                    },
+                    "album_hash": {
+                        "NULL": true
+                    },
+                    "modified": {
+                        "S": "2025-12-12 21:08:17"
+                    },
+                    "id": {
+                        "S": "1615801034"
+                    },
+                    "post_image_cdn": {
+                        "S": "https://img-ig-cdn.walls.io/01KCA6979MGXGSH5GYF13B2C5S+instagram+default"
+                    },
+                    "longitude": {
+                        "S": "-47.90681960000000"
+                    },
+                    "post_image": {
+                        "S": "https://scontent.cdninstagram.com/v/t51.82787-15/599382610_18393080812176853_4799268972830583881_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ig_cache_key=Mzc4NjAwMjY2MzY1MDIwMzY2NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjg4OHgxMDUxLnNkci5DMyJ9&_nc_ohc=0f9aMH3fQ3sQ7kNvwH1H-J6&_nc_oc=AdkwaeWuo6GXIirN3BRbyP8gdBhWwvPkT90NmkwZTKqoyDUqGQOMV43d6_kDhySPwtg&_nc_ad=z-m&_nc_cid=1489&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=eAx2z2pi65qC3e-Y3lP_0g&oh=00_AflCqBl6gkXdPYjAbORPJ5pDW1T6yXjVwYM8o8Q7K5L0XQ&oe=69425831"
+                    },
+                    "created": {
+                        "S": "2025-12-12 13:38:29"
+                    },
+                    "post_link": {
+                        "S": "https://www.instagram.com/p/DSKlV0NjZgQ/"
+                    },
+                    "external_fullname": {
+                        "S": "Gean Nhaia"
+                    },
+                    "llm_analysis": {
+                        "M": {
+                            "recommended_action": {
+                                "S": "Thank customer for positive feedback and celebrate their milestone with a warm, supportive response. Consider engaging with brand hashtags (#somoslatam) to acknowledge employee or customer loyalty."
+                            },
+                            "message": {
+                                "S": "Customer celebrating one-year anniversary of their career journey with LATAM Airlines. Positive personal milestone post expressing gratitude and optimism about future with the airline. References themes of resilience, adaptation, safety, and human connections."
+                            },
+                            "priority": {
+                                "N": "5"
+                            },
+                            "requires_intervention": {
+                                "BOOL": false
+                            }
+                        }
+                    },
+                    "created_timestamp": {
+                        "N": "1765546709"
+                    },
+                    "external_image": {
+                        "S": "https://instagram.fiev22-2.fna.fbcdn.net/v/t51.2885-19/559061599_18383395711176853_5203017308203123673_n.jpg?efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fiev22-2.fna.fbcdn.net&_nc_cat=101&_nc_oc=Q6cZ2QFX4YYAXjUuB5k2vDisQ-90qnYsPfgNoDse9yCvlbvGCwBy1p7UDJkMmad8G8evEJ8&_nc_ohc=pziYhchPBmYQ7kNvwEf___b&_nc_gid=eAx2z2pi65qC3e-Y3lP_0g&edm=AMKDjl4BAAAA&ccb=7-5&oh=00_AflSkZSKB6hvMmJ_8h-bWjnB-pbRZ6tOWsXo3_Hs3ikYsQ&oe=694241D4&_nc_sid=472314"
+                    },
+                    "userlink": {
+                        "NULL": true
+                    },
+                    "post_link_wallsio": {
+                        "S": "https://my.walls.io/s/1lLjf0"
+                    },
+                    "external_user_id": {
+                        "S": "5365416852"
+                    },
+                    "modified_timestamp": {
+                        "N": "1765573697"
+                    },
+                    "event_id": {
+                        "S": "d007779dca907d9443cd5ec715ca6bed"
+                    },
+                    "post_video_cdn": {
+                        "NULL": true
+                    },
+                    "event_name": {
+                        "S": "INSERT"
+                    },
+                    "comment": {
+                        "S": "Hoje faz um ano que uma nova carreira decolou.\n\nUma jornada de resiliência, adaptação, segurança e conexões.\n\nQue venha os próximos anos.\n\n#LatamAirlines #somoslatam"
+                    },
+                    "location": {
+                        "S": "São Carlos, Brazil, BR"
+                    },
+                    "source_id": {
+                        "S": "416122"
+                    },
+                    "permalink": {
+                        "S": "https://www.instagram.com/p/DSKlV0NjZgQ/"
+                    },
+                    "external_name": {
+                        "S": "gean_nhaia"
+                    },
+                    "status": {
+                        "BOOL": true
+                    }
+                },
+                "SequenceNumber": "364600004040714315507439",
+                "SizeBytes": 2654,
+                "StreamViewType": "NEW_IMAGE"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-west-2:461004555540:table/SOCIAL-LISTENING-TO-CONNECT-TProcessedChangeEE7D4456-1FSLS9TFEBYCA/stream/2026-01-27T03:48:23.298"
+        }
+    ]
+}
