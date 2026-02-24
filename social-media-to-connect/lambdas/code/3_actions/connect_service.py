@@ -72,7 +72,7 @@ def create_connect_task(
         
     except ClientError as e:
         error_msg = f"Failed to create Connect task for post {post_id}: {str(e)}"
-        logger.error(error_msg)
+        logger.warning(error_msg)
         raise Exception(error_msg)
 
 

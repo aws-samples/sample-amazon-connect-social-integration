@@ -160,5 +160,5 @@ class TableService:
             self.table.put_item(Item=post)
             logger.info(f"Successfully wrote post {post_id} to DynamoDB")
         except ClientError as e:
-            logger.error(f"DynamoDB write failed for post {post_id}: {str(e)}")
+            logger.warning(f"DynamoDB write failed for post {post_id}: {str(e)}")
             raise Exception(f"Failed to write post {post_id} to DynamoDB: {str(e)}")

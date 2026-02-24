@@ -40,7 +40,7 @@ def lambda_handler(event, context):
         logger.info(f"Using Connect instance: {instance_id}")
         
     except Exception as e:
-        logger.error(f"Failed to load Connect configuration: {str(e)}")
+        logger.warning(f"Failed to load Connect configuration: {str(e)}")
         raise
     
     # Get table name for updates

@@ -58,7 +58,7 @@ class SocialMediaToConnectStack(Stack):
         self.secret = sm.Secret(
             self,
             "wallsSecret",
-            secret_name="wallsio-secret",
+            secret_name=config.WALLSIO_SECRET_NAME,
             secret_string_value=SecretValue("REPLACE_WITH_REAL_SECRET"),
         )
 

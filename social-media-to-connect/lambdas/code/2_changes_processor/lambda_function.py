@@ -25,7 +25,7 @@ def save_to_dynamodb(table_name: str, record: dict):
         table.put_item(Item=record)
         logger.info(f"Successfully saved record {record.get('id')} to {table_name}")
     except Exception as e:
-        logger.error(f"Failed to save record {record.get('id')} to DynamoDB: {str(e)}")
+        logger.warning(f"Failed to save record {record.get('id')} to DynamoDB: {str(e)}")
         raise
 
 

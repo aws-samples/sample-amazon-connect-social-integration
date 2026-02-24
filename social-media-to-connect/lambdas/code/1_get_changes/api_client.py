@@ -38,7 +38,7 @@ def call_api(api_config: Dict[str, Any]) -> Dict[str, Any]:
     # Log the filtered parameters (without access token for security)
     log_params = {k: v for k, v in filtered_params.items() if k != 'access_token'}
     if 'access_token' in filtered_params:
-        log_params['access_token'] = '[REDACTED]'
+        log_params['access_token'] = '[REDACTED]'  # nosec B105 - not a real password, just a log placeholder 
     logger.info(f"API call parameters: {log_params}")
     
     # Set default headers
@@ -63,6 +63,11 @@ def call_api(api_config: Dict[str, Any]) -> Dict[str, Any]:
                 query_string = parse.urlencode(filtered_params)
                 full_url = f"{url}?{query_string}"
         
+        # Validate URL scheme to prevent file:/ or custom scheme access
+        parsed = parse.urlparse(full_url)
+        if parsed.scheme not in ('http', 'https'):
+            raise ValueError(f"Unsupported URL scheme: {parsed.scheme}")
+
         # Create request object
         req = request.Request(
             full_url,
@@ -73,8 +78,8 @@ def call_api(api_config: Dict[str, Any]) -> Dict[str, Any]:
         
         logger.info(f"Making {method} request to {url}")
         
-        # Make the request
-        with request.urlopen(req, timeout=30) as response:
+        # Make the request - URL scheme already validated above
+        with request.urlopen(req, timeout=30) as response:  # nosemgrep: dynamic-urllib-use-detected
             response_data = response.read().decode('utf-8')
             return json.loads(response_data)
             

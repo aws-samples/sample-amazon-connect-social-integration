@@ -35,6 +35,7 @@ API_CONFIG_CONTENT = {
     "body": {},
 }
 
+WALLSIO_SECRET_NAME = "wallsio-secret"
 
 PROCESS_CONFIG_PARAM_NAME = "/config/process"
 
