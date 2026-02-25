@@ -6,12 +6,7 @@ CONNECT_CONFIG_CONTENT = {
     "connect_config": {
         "instance_id": "INSTANCE_ID",
         "contact_flow_id": "CONTACT_FLOW_ID",
-    },
-    "task_mapping": {
-        "name_field": "id",
-        "description_field": "comment",
-        "reference_field": "id",
-    },
+    }
 }
 
 API_CONFIG_CONTENT = {
@@ -61,13 +56,13 @@ For each post, analyze the following:
    - Priority 2: Significant issues (flight delays, cancellations, booking problems, service complaints)
    - Priority 3: Moderate issues (minor service issues, general complaints, refund requests)
    - Priority 4: Low priority (general questions, feedback, suggestions)
-   - Priority 5: Minimal priority (positive feedback, general comments, Q&A responses)
+   - Priority 5: Minimal priority (positive feedback, general comments, Q&A responses or irrelevant posts)
 
 4. RECOMMENDED ACTION:
    - Provide specific, actionable recommendation
    - Examples: "Contact customer immediately via DM", "Escalate to baggage services", "Respond with flight status", "Monitor only", "Thank customer for positive feedback"
 
-Analyze the post objectively and provide structured output that enables efficient customer service response.""",
+Analyze the post objectively and provide structured output that enables efficient customer service response. It is very important to respond in the requested structure, even if the comment is empty or does not provide useful information (your structured output will be used later).""",
         "model_id": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
     }
 }
