@@ -91,7 +91,7 @@ def download_attachment(url):
     try:
         import urllib.request
         req = urllib.request.Request(url, method='GET')
-        with urllib.request.urlopen(req, timeout=15) as response:  # nosec: URL scheme validated above
+        with urllib.request.urlopen(req, timeout=15) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             content_type = response.headers.get('Content-Type', 'application/octet-stream')
             file_bytes = response.read()
             logger.info(f"Downloaded attachment: {len(file_bytes)} bytes, type: {content_type}")

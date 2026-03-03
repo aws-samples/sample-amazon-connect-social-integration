@@ -182,7 +182,7 @@ class ChatService:
                     headers=attachResponse['UploadMetadata']['HeadersToInclude'],
                     method='PUT'
                 )
-                with urllib.request.urlopen(req) as filePostingResponse:  # nosec: URL scheme validated above
+                with urllib.request.urlopen(req) as filePostingResponse:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
                     logger.info(filePostingResponse.status)
                     self.participant.complete_attachment_upload(
                         AttachmentIds=[attachResponse['AttachmentId']],

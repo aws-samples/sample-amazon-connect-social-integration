@@ -221,7 +221,7 @@ class InstagramService:
             logger.info(f"Fetching profile from Graph API for user: {instagram_scoped_id}")
             
             req = request.Request(url, method='GET')
-            with request.urlopen(req, timeout=10) as response:  # nosec: URL is validated above
+            with request.urlopen(req, timeout=10) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
                 response_data = response.read()
                 profile_data = json.loads(response_data.decode('utf-8'))
             

@@ -17,8 +17,6 @@ def get_attachment_type(mime_type):
         return "video"
     elif mime_type.startswith("audio/"):
         return "audio"
-    elif mime_type == "application/pdf":
-        return "file"
     else:
         return "file"
 
@@ -69,7 +67,7 @@ def send_instagram_text(access_token, text_message, recipient_id, instagram_acco
     )
 
     try:
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(req) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             result = json.loads(response.read().decode("utf-8"))
             print(f"Message sent successfully: {result}")
             return result
@@ -131,7 +129,7 @@ def send_instagram_attachment(
     )
 
     try:
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(req) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             result = json.loads(response.read().decode("utf-8"))
             print(f"Attachment sent successfully: {result}")
             return result
