@@ -131,7 +131,7 @@ For full details, see [Instagram Setup Guide — Step 4](./instagram_setup.md#st
 
 
 <div align="center">
-<video src="demo_instagram_connect_chat.mp4" width="540" controls></video>
+<video src="https://github.com/user-attachments/assets/5f6d988b-5340-4b32-ac1b-ec85114adb2b" width="540" controls></video>
 </div>
 
 
