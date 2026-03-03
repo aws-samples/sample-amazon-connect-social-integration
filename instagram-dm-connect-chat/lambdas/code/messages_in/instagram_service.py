@@ -1,0 +1,274 @@
+import logging
+import json
+import os
+import time
+from urllib import request, parse, error
+from typing import List, Dict, Any, Optional
+from table_service import TableService
+
+logger = logging.getLogger()
+
+USERS_TABLE_NAME = os.environ.get("USERS_TABLE_NAME")
+PROFILE_TTL_SECONDS = 60 * 60 * 24 * 7  # 7 days
+
+
+class InstagramMessage:
+    """Represents a single Instagram message"""
+    
+    def __init__(self, messaging_data: Dict[str, Any]):
+        self.sender_id = messaging_data.get('sender', {}).get('id')
+        self.recipient_id = messaging_data.get('recipient', {}).get('id')
+        self.timestamp = messaging_data.get('timestamp')
+        
+        message_data = messaging_data.get('message', {})
+        self.message_id = message_data.get('mid')
+        self.text = message_data.get('text')
+        self.attachments = message_data.get('attachments', [])
+        
+        # Determine message type
+        if self.text:
+            self.message_type = 'text'
+        elif len(self.attachments):
+            self.message_type = 'attachment'
+        else:
+            self.message_type = 'unknown'
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert message to dictionary"""
+        return {
+            'messageId': self.message_id,
+            'senderId': self.sender_id,
+            'recipientId': self.recipient_id,
+            'timestamp': self.timestamp,
+            'text': self.text,
+            'messageType': self.message_type,
+            'attachments': self.attachments
+        }
+    
+    def __repr__(self):
+        return f"InstagramMessage(id={self.message_id}, sender={self.sender_id}, type={self.message_type})"
+
+
+class InstagramService:
+    """Service to process Instagram webhook events"""
+    
+    GRAPH_API_VERSION = 'v24.0'
+    GRAPH_API_BASE_URL = f'https://graph.instagram.com/{GRAPH_API_VERSION}'
+
+    def __init__(self, event_body: Dict[str, Any], instagram_account_id:[str] =None, access_token: [str] = None, get_profiles: bool = False):
+        """
+        Initialize Instagram service with webhook event body
+        
+        Args:
+            event_body: The parsed JSON body from Instagram webhook
+            access_token: Instagram access token for API calls (optional)
+            get_profiles: If True, automatically fetch user profiles for all senders (default: False)
+        """
+        self.event_body = event_body
+        self.access_token = access_token
+        self.get_profiles = get_profiles
+        self.instagram_account_id = instagram_account_id
+        self.messages: List[InstagramMessage] = []
+        self.entries = []
+        self.user_profiles: Dict[str, Dict[str, Any]] = {}  # Cache profiles by sender_id
+        
+        # Validate and parse the event
+        if event_body.get('object') == 'instagram':
+            self._parse_entries()
+            
+            # Fetch profiles if requested
+            if self.get_profiles and self.access_token:
+                self._fetch_all_profiles()
+    
+    def _parse_entries(self):
+        """Parse all entries and extract messages"""
+        entries = self.event_body.get('entry', [])
+        
+        for entry in entries:
+            entry_data = {
+                'id': entry.get('id'),
+                'time': entry.get('time'),
+                'messaging': []
+            }
+            
+            messaging_list = entry.get('messaging', [])
+            for messaging in messaging_list:
+                message = InstagramMessage(messaging)
+                # Skip messages sent by our own account
+                if self.instagram_account_id and message.sender_id == self.instagram_account_id:
+                    logger.debug(f"Skipping message from own account: {message.sender_id}")
+                    continue
+                self.messages.append(message)
+                entry_data['messaging'].append(message)
+            
+            self.entries.append(entry_data)
+        
+        logger.info(f"Parsed {len(self.messages)} messages from {len(self.entries)} entries")
+    
+    def _fetch_all_profiles(self):
+        """Fetch profiles for all unique senders in messages"""
+        unique_sender_ids = set()
+        
+        for message in self.messages:
+            if message.sender_id:
+                unique_sender_ids.add(message.sender_id)
+        
+        logger.info(f"Fetching profiles for {len(unique_sender_ids)} unique senders")
+        
+        for sender_id in unique_sender_ids:
+            profile = self.get_user_profile(sender_id)
+            if profile:
+                self.user_profiles[sender_id] = profile
+        
+        logger.info(f"Successfully fetched {len(self.user_profiles)} profiles")
+    
+    def get_messages(self) -> List[InstagramMessage]:
+        """Get all parsed messages"""
+        return self.messages
+    
+    def get_text_messages(self) -> List[InstagramMessage]:
+        """Get only text messages"""
+        return [msg for msg in self.messages if msg.message_type == 'text']
+    def get_attachment_messages(self) -> List[InstagramMessage]:
+        """Get only attachment messages"""
+        return [msg for msg in self.messages if msg.message_type == 'attachment']
+    
+    def get_entry_count(self) -> int:
+        """Get the number of entries"""
+        return len(self.entries)
+    
+    def get_message_count(self) -> int:
+        """Get the total number of messages"""
+        return len(self.messages)
+    
+    def get_user_profile(self, instagram_scoped_id: str, fields: Optional[List[str]] = None) -> Optional[Dict[str, Any]]:
+        """
+        Get Instagram user profile information using Instagram Graph API
+        
+        Args:
+            instagram_scoped_id: The sender ID from webhook (IGSID)
+            fields: List of fields to retrieve. Defaults to common fields.
+                   Available: name, username, profile_pic, follower_count,
+                   is_user_follow_business, is_business_follow_user, is_verified_user
+        
+        Returns:
+            Dictionary with user profile data or None if request fails
+            
+        Example response:
+            {
+                "name": "Peter Chang",
+                "username": "peter_chang_live",
+                "profile_pic": "https://fbcdn-profile-...",
+                "follower_count": 1234,
+                "is_user_follow_business": false,
+                "is_business_follow_user": true
+            }
+        """
+        # Check in-memory cache first
+        if instagram_scoped_id in self.user_profiles:
+            logger.debug(f"Returning cached profile for user: {instagram_scoped_id}")
+            return self.user_profiles[instagram_scoped_id]
+
+        # Check DynamoDB users table
+        if USERS_TABLE_NAME:
+            try:
+                users_table = TableService(table_name=USERS_TABLE_NAME)
+                db_profile = users_table.get_item({"id": instagram_scoped_id})
+                if db_profile:
+                    # Remove internal fields before returning
+                    db_profile.pop("id", None)
+                    db_profile.pop("timestamp", None)
+                    logger.info(f"Profile found in users table for: {instagram_scoped_id}")
+                    self.user_profiles[instagram_scoped_id] = db_profile
+                    return db_profile
+            except Exception as e:
+                logger.warning(f"Error reading users table, falling back to API: {e}")
+
+        if not self.access_token:
+            logger.warning("Access token not provided. Cannot fetch user profile.")
+            return None
+
+        logger.info(f"Profile NOT found in users table for: {instagram_scoped_id}")        
+        # Default fields if none specified
+        if fields is None:
+            fields = [
+                'name',
+                'username',
+                'profile_pic',
+                'follower_count',
+                'is_user_follow_business',
+                'is_business_follow_user',
+                'is_verified_user'
+            ]
+        
+        params = {
+            'fields': ','.join(fields),
+            'access_token': self.access_token
+        }
+        url = f"{self.GRAPH_API_BASE_URL}/{instagram_scoped_id}?{parse.urlencode(params)}"
+        
+        try:
+            logger.info(f"Fetching profile from Graph API for user: {instagram_scoped_id}")
+            
+            req = request.Request(url, method='GET')
+            with request.urlopen(req, timeout=10) as response:
+                response_data = response.read()
+                profile_data = json.loads(response_data.decode('utf-8'))
+            
+            logger.info(f"Successfully retrieved profile for user: {profile_data.get('username', 'unknown')}")
+            
+            # Cache in memory
+            self.user_profiles[instagram_scoped_id] = profile_data
+
+            # Persist to DynamoDB users table
+            if USERS_TABLE_NAME:
+                try:
+                    users_table = TableService(table_name=USERS_TABLE_NAME)
+                    item = {**profile_data, "id": instagram_scoped_id, "timestamp": int(time.time()) + PROFILE_TTL_SECONDS}
+                    users_table.table.put_item(Item=item)
+                    logger.info(f"Saved profile to users table for: {instagram_scoped_id}")
+                except Exception as e:
+                    logger.warning(f"Failed to save profile to users table: {e}")
+            
+            return profile_data
+            
+        except error.HTTPError as e:
+            logger.error(f"HTTP error fetching user profile: {e.code} {e.reason}")
+            try:
+                error_body = e.read().decode('utf-8')
+                logger.error(f"Response: {error_body}")
+            except Exception:
+                pass
+            return None
+        except error.URLError as e:
+            logger.error(f"URL error fetching user profile: {e.reason}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error fetching user profile: {e}")
+            return None
+    
+    def enrich_messages_with_profiles(self) -> List[Dict[str, Any]]:
+        """
+        Enrich all messages with sender profile information
+        Uses cached profiles if available, otherwise fetches them
+        
+        Returns:
+            List of dictionaries containing message data and sender profile
+        """
+        enriched_messages = []
+        
+        for message in self.messages:
+            message_data = message.to_dict()
+            
+            # Get sender profile from cache or fetch it
+            if message.sender_id:
+                profile = self.user_profiles.get(message.sender_id)
+                if not profile and self.access_token:
+                    profile = self.get_user_profile(message.sender_id)
+                
+                if profile:
+                    message_data['senderProfile'] = profile
+            
+            enriched_messages.append(message_data)
+        
+        return enriched_messages
