@@ -42,7 +42,16 @@ def send_instagram_text(access_token, text_message, recipient_id, instagram_acco
     if not instagram_account_id:
         raise ValueError("instagram_account_id must be provided or set in environment variables")
 
+    # Validate IDs are numeric to prevent URL injection (e.g. file:// schemes)
+    if not str(instagram_account_id).isdigit():
+        raise ValueError(f"Invalid instagram_account_id: must be numeric. Got: {instagram_account_id!r}")
+    if not str(recipient_id).isdigit():
+        raise ValueError(f"Invalid recipient_id: must be numeric. Got: {recipient_id!r}")
+
     url = f"{GRAPH_API_BASE_URL}/{instagram_account_id}/messages"
+
+    if not url.startswith("https://"):
+        raise ValueError(f"Constructed URL does not use HTTPS scheme: {url}")
 
     payload = {
         "recipient": {"id": recipient_id},
@@ -91,9 +100,18 @@ def send_instagram_attachment(
     if not instagram_account_id:
         raise ValueError("instagram_account_id must be provided or set in environment variables")
 
+    # Validate IDs are numeric to prevent URL injection (e.g. file:// schemes)
+    if not str(instagram_account_id).isdigit():
+        raise ValueError(f"Invalid instagram_account_id: must be numeric. Got: {instagram_account_id!r}")
+    if not str(recipient_id).isdigit():
+        raise ValueError(f"Invalid recipient_id: must be numeric. Got: {recipient_id!r}")
+
     attachment_type = get_attachment_type(mime_type)
 
     url = f"{GRAPH_API_BASE_URL}/{instagram_account_id}/messages"
+
+    if not url.startswith("https://"):
+        raise ValueError(f"Constructed URL does not use HTTPS scheme: {url}")
 
     payload = {
         "recipient": {"id": recipient_id},

@@ -188,6 +188,11 @@ class InstagramService:
             logger.warning("Access token not provided. Cannot fetch user profile.")
             return None
 
+        # Validate instagram_scoped_id is numeric to prevent URL injection (e.g. file:// schemes)
+        if not instagram_scoped_id or not instagram_scoped_id.isdigit():
+            logger.error(f"Invalid instagram_scoped_id: must be numeric. Got: {instagram_scoped_id!r}")
+            return None
+
         logger.info(f"Profile NOT found in users table for: {instagram_scoped_id}")        
         # Default fields if none specified
         if fields is None:
@@ -207,11 +212,16 @@ class InstagramService:
         }
         url = f"{self.GRAPH_API_BASE_URL}/{instagram_scoped_id}?{parse.urlencode(params)}"
         
+        # Defense-in-depth: ensure the URL uses HTTPS scheme only
+        if not url.startswith("https://"):
+            logger.error(f"Constructed URL does not use HTTPS scheme: {url}")
+            return None
+        
         try:
             logger.info(f"Fetching profile from Graph API for user: {instagram_scoped_id}")
             
             req = request.Request(url, method='GET')
-            with request.urlopen(req, timeout=10) as response:
+            with request.urlopen(req, timeout=10) as response:  # nosec: URL is validated above
                 response_data = response.read()
                 profile_data = json.loads(response_data.decode('utf-8'))
             
@@ -237,8 +247,8 @@ class InstagramService:
             try:
                 error_body = e.read().decode('utf-8')
                 logger.error(f"Response: {error_body}")
-            except Exception:
-                pass
+            except Exception as read_err:
+                logger.warning(f"Could not read HTTP error response body: {read_err}")
             return None
         except error.URLError as e:
             logger.error(f"URL error fetching user profile: {e.reason}")

@@ -83,10 +83,15 @@ def download_attachment(url):
     Returns:
         tuple: (file_bytes, content_type) or (None, None) on failure
     """
+    # Validate URL scheme to prevent file:// or other dangerous schemes
+    if not url or not url.startswith("https://"):
+        logger.error(f"Invalid attachment URL scheme, only HTTPS is allowed: {url}")
+        return None, None
+
     try:
         import urllib.request
         req = urllib.request.Request(url, method='GET')
-        with urllib.request.urlopen(req, timeout=15) as response:
+        with urllib.request.urlopen(req, timeout=15) as response:  # nosec: URL scheme validated above
             content_type = response.headers.get('Content-Type', 'application/octet-stream')
             file_bytes = response.read()
             logger.info(f"Downloaded attachment: {len(file_bytes)} bytes, type: {content_type}")

@@ -170,13 +170,19 @@ class ChatService:
             raise
         else:
             try:
+                upload_url = attachResponse['UploadMetadata']['Url']
+                # Validate URL scheme to prevent file:// or other dangerous schemes
+                if not upload_url or not upload_url.startswith("https://"):
+                    logger.error(f"Invalid upload URL scheme, only HTTPS is allowed")
+                    return None, "Invalid upload URL scheme"
+
                 req = urllib.request.Request(
-                    attachResponse['UploadMetadata']['Url'],
+                    upload_url,
                     data=fileContents,
                     headers=attachResponse['UploadMetadata']['HeadersToInclude'],
                     method='PUT'
                 )
-                with urllib.request.urlopen(req) as filePostingResponse:
+                with urllib.request.urlopen(req) as filePostingResponse:  # nosec: URL scheme validated above
                     logger.info(filePostingResponse.status)
                     self.participant.complete_attachment_upload(
                         AttachmentIds=[attachResponse['AttachmentId']],

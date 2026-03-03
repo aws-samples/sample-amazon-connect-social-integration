@@ -40,7 +40,7 @@ def get_ssm_parameter(parameter_name: str) -> Dict[str, Any]:
             logger.info(f"Successfully parsed SSM parameter: {parameter_name}")
             return config
         except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON in SSM parameter {parameter_name}: {str(e)}")
+            logger.warning(f"Invalid JSON in SSM parameter {parameter_name}: {str(e)}")
             raise ValueError(f"SSM parameter contains invalid JSON: {str(e)}")
             
     except ssm_client.exceptions.ParameterNotFound:

@@ -11,4 +11,4 @@ INSTAGRAM_CONFIG_PARAM_CONTENT = {
 
 META_API_VERSION = "v23.0"
 
-SECRET_NAME = "instagram-token"
+SECRET_NAME = "instagram-token"  # nosec B105 - this is the secret name/identifier, not a hardcoded credential
