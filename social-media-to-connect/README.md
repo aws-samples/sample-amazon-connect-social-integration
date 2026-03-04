@@ -2,7 +2,7 @@
 
 ## Architecture
 
-![Architecture Diagram](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/social-media-to-connect/connect-social-cx.svg)
+![Architecture Diagram](connect-social-cx.svg)
 
 This project deploys an automated social media monitoring and customer service integration system using AWS CDK. The architecture processes social media posts, analyzes them using Amazon Bedrock LLM and Strands Framework, and creates tasks in Amazon Connect for customer service agents.
 

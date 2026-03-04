@@ -6,7 +6,7 @@ Bidirectional messaging between Instagram Direct Messages and Amazon Connect Cha
 
 ## Architecture
 
-![Architecture Diagram](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/instagram-dm-connect-chat/instagram-connect-chat.svg)
+![Architecture Diagram](instagram-connect-chat.svg)
 
 ## How It Works
 
@@ -85,7 +85,7 @@ cd instagram-dm-connect-chat
 
 ### 1. Update the Instagram Access Token
 
-The stack creates a Secrets Manager secret named `instagram-token` with a placeholder value. Update it with your actual Instagram User Access Token (see [Instagram Setup Guide](./instagram_setup.md#step-5-generate-instagram-user-access-token)):
+The stack creates a Secrets Manager secret named `instagram-token` with a placeholder value. Update it with your actual Instagram User Access Token (see [Instagram Setup Guide](../instagram_setup.md#step-5-generate-instagram-user-access-token)):
 
 ### 2. Update the SSM Configuration Parameter
 
