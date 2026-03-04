@@ -22,7 +22,7 @@ Necesitarás el **INSTANCE_ID** de tu instancia. Lo puedes encontrar en la conso
 
 🇺🇸 Have or create the expected experience a user will have with a contact. [Follow this guide](https://docs.aws.amazon.com/connect/latest/adminguide/create-contact-flow.html) to create an Inbound Contact flow. The simplest one will be ok.
 
-![simplest flow](flow_simple.png)
+![simplest flow](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/flow_simple.png)
 
 (Remember to publish the flow!)
 

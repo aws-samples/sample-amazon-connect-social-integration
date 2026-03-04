@@ -6,7 +6,7 @@ Bidirectional messaging between Instagram Direct Messages and Amazon Connect Cha
 
 ## Architecture
 
-![Architecture Diagram](./instagram-connect-chat.svg)
+![Architecture Diagram](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/instagram-dm-connect-chat/instagram-connect-chat.svg)
 
 ## How It Works
 
