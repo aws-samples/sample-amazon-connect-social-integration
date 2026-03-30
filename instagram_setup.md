@@ -8,8 +8,11 @@ Step-by-step guide to set up Instagram Direct Messaging using Meta's **Instagram
 
 ## Prerequisites
 
-- ✅ An **Instagram Business** or **Instagram Creator** account (Professional account)
+- ✅ An **Instagram Business account** (not a Professional/Creator account — it must be a Business account specifically)
+- ✅ A **Meta account linked to your Instagram Business account** (required to generate access tokens via Business Login)
 - ✅ An HTTPS endpoint for webhooks
+
+> **Important**: The Instagram API with Instagram Login requires a **Business account**, not a Professional (Creator) account. If your account is currently a Creator account, you must switch it to a Business account in Instagram Settings > Account type and tools > Switch to Business account. Additionally, your Instagram Business account must be linked to a Meta account. See [Business Login for Instagram](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login) for details.
 
 ## Step 1: Create a Meta App
 
@@ -46,18 +49,19 @@ Step-by-step guide to set up Instagram Direct Messaging using Meta's **Instagram
 
 ---
 
-## Step 3: Link Your Instagram Professional Account
+## Step 3: Link Your Instagram Business Account
 
 ### 3.1 Add Your Instagram Account for Testing
 
 1. In the App Dashboard, go to **Instagram** > **API Setup with Instagram Login**
 2. Scroll to **"Instagram accounts"** section
 3. Click **"Add Instagram Account"**
-4. Log in with your Instagram credentials
-5. Your Instagram Business account will be linked to the app
-
 **Important Requirements**:
 - Account must be set to **Public** (at least during testing)
+- Account must be an **Instagram Business account** (not a Creator/Professional account)
+- Your Instagram Business account must be **linked to a Meta account** — this is required to generate access tokens via Business Login
+
+**Reference**: [Instagram API with Instagram Login](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login)
 - Account must be an **Instagram Business** or **Creator** account (Professional account)
 
 **Reference**: [Instagram API with Instagram Login](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login)
@@ -84,7 +88,7 @@ When a message is received, Meta sends a POST request with JSON payload
 3. Click **"Configure"**
 4. Enter your webhook configuration:
    - **Callback URL**: `https://your-endpoint.com/webhook` 
-   - **Verify Token**: Choose or create a secure string (e.g., `my_secure_verify_token_2024`)
+   - **Verify Token**: Choose or create a secure string (e.g., `my_secure_verify_token_2026`)
    
    **Important**: This verify token is YOUR choice. Remember it - you'll use it in your webhook verification logic (Only known by you and meta)
 
@@ -119,22 +123,17 @@ For the **Instagram API with Instagram Login**, you need an **Instagram User Acc
 ### 5.2 Required Permissions
 
 Your access token must have the following permissions (scopes):
+### 5.3 Generate a Test Token from the App Dashboard
 
-- `instagram_business_basic` - Basic account access
-- `instagram_business_manage_messages` - Send and receive messages
+1. Go to [Meta Developer Portal](https://developers.facebook.com/) → select your app
+2. In the left menu, navigate to **Instagram** > **API setup with Instagram business login**
+3. Next to your Instagram account, click **"Generate token"**
+4. Log in with your Instagram account and authorize the app
+5. Copy the generated token
 
-### 5.3 Generate Access Token via App Dashboard
+> **Note**: This generates a short-lived token for testing. For production use, implement the full [Business Login flow](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login) to obtain long-lived tokens.
 
-
-1. In your App Dashboard, go to **Instagram** > **API Setup with Instagram Login**
-2. Under **"Instagram accounts"**, you'll see your linked account
-3. Click **"Generate Token"** next to your Instagram account
-4. Select the required permissions:
-   - `instagram_business_basic`
-   - `instagram_business_manage_messages`
-5. Click **"Generate Token"**
-6. Copy your **Instagram User Access Token**
-7. Note your **Instagram Business Account ID** (shown as `IG_ID`)
+> **Troubleshooting**: If you cannot generate a token, make sure your Instagram Business account has a Meta account linked. You can link it at [https://accountscenter.instagram.com/](https://accountscenter.instagram.com/) under **Accounts** > **Add account** > add your Meta account. This is a prerequisite for token generation via Business Login.
 
 
 ### 5.4 Test Your Access Token
@@ -151,7 +150,7 @@ curl -X GET \
 **Success Response**:
 ```json
 {
-  "id": "17841400008460056",
+  "id": "17841400008...",
   "username": "yourbusiness",
   "account_type": "BUSINESS"
 }
