@@ -1,5 +1,5 @@
 
-INSTAGRAM_WEBHOOK_PARAM_NAME = "/meta/webhook/url"
+INSTAGRAM_WEBHOOK_PARAM_NAME = "/meta/instagram/webhook/url"
 
 INSTAGRAM_CONFIG_PARAM_NAME = "/meta/instagram/config"
 INSTAGRAM_CONFIG_PARAM_CONTENT = {
