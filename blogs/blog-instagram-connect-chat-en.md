@@ -1,8 +1,19 @@
 # Instagram DMs to Amazon Connect Chat — Bidirectional Messaging Integration
 
-| | |
-|---|---|
-| _Learn how to bridge Instagram Direct Messages and Amazon Connect Chat for seamless customer service. This step-by-step guide covers the full architecture using AWS CDK, AWS Lambda, Amazon API Gateway, Amazon DynamoDB, and Amazon Connect. From receiving customer DMs to routing them to agents, forwarding agent replies back to Instagram, and handling attachments in both directions — all with automatic session management and user profile caching._ | ![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/instagram-dm-connect-chat/demo_instagram_connect_chat.gif) |
+<table>
+<tr>
+<td width="50%">
+
+_Learn how to bridge Instagram Direct Messages and Amazon Connect Chat for seamless customer service. This step-by-step guide covers the full architecture using AWS CDK, AWS Lambda, Amazon API Gateway, Amazon DynamoDB, and Amazon Connect. From receiving customer DMs to routing them to agents, forwarding agent replies back to Instagram, and handling attachments in both directions — all with automatic session management and user profile caching._
+
+</td>
+<td width="50%">
+
+![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/instagram-dm-connect-chat/demo_instagram_connect_chat.gif)
+
+</td>
+</tr>
+</table>
 
 
 Your customers are already on Instagram. They browse your products, check your stories, and when they have a question — they send a DM. If your support team has to switch between Instagram and their contact center tool, you're losing time and context.
