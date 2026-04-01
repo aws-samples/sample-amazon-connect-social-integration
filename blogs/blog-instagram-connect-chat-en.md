@@ -349,6 +349,7 @@ This solution handles the core Instagram-to-Connect messaging flow. Some ideas t
 
 - Add support for Instagram Stories mentions and replies
 - Use Amazon Bedrock to analyze inbound images and provide agents with context before they respond
+- Use [Amazon Connect AI Agents](https://docs.aws.amazon.com/connect/latest/adminguide/agentic-self-service.html) for agentic self-service, letting customers resolve common issues without waiting for a human agent
 - Combine with the [Facebook Messenger integration](https://github.com/aws-samples/sample-amazon-connect-social-integration/tree/main/facebook-messenger-connect-chat) to handle both Meta channels from a single Amazon Connect instance
 
 ### Leverage Amazon Connect Customer Profiles
