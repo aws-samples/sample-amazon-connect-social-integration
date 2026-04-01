@@ -351,6 +351,10 @@ This solution handles the core Instagram-to-Connect messaging flow. Some ideas t
 - Use Amazon Bedrock to analyze inbound images and provide agents with context before they respond
 - Combine with the [Facebook Messenger integration](https://github.com/aws-samples/sample-amazon-connect-social-integration/tree/main/facebook-messenger-connect-chat) to handle both Meta channels from a single Amazon Connect instance
 
+### Leverage Amazon Connect Customer Profiles
+
+This solution already fetches Instagram profile data (name, username, profile picture, follower count) and passes it as contact attributes. You can take this further by integrating with [Amazon Connect Customer Profiles](https://docs.aws.amazon.com/connect/latest/adminguide/customer-profiles.html) to give agents a unified view of the customer across channels. Then in your Contact Flow, use the [Customer Profiles block](https://docs.aws.amazon.com/connect/latest/adminguide/customer-profiles-block.html) to retrieve the profile and display it in the agent workspace. The agent sees the customer's name, Instagram handle, follower count, and any previous interaction history — all before they even type a reply.
+
 ## Resources
 
 - [Project Repository](https://github.com/aws-samples/sample-amazon-connect-social-integration)
