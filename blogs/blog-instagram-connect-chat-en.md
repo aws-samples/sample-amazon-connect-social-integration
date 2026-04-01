@@ -3,14 +3,14 @@
    _Learn how to bridge Instagram Direct Messages and Amazon Connect Chat for seamless customer service. This step-by-step guide covers the full architecture using AWS CDK, AWS Lambda, Amazon API Gateway, Amazon DynamoDB, and Amazon Connect. From receiving customer DMs to routing them to agents, forwarding agent replies back to Instagram, and handling attachments in both directions — all with automatic session management and user profile caching._
 
 
-![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/instagram-dm-connect-chat/instagram-connect-chat.gif)
+![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/instagram-dm-connect-chat/demo_instagram_connect_chat.gif)
 
 
 Your customers are already on Instagram. They browse your products, check your stories, and when they have a question — they send a DM. If your support team has to switch between Instagram and their contact center tool, you're losing time and context.
 
 In this blog, you'll learn how to connect Instagram Direct Messages directly to Amazon Connect Chat, so your agents can handle Instagram conversations from the same workspace they use for every other channel. No app switching, no copy-pasting, no lost messages.
 
-Check out the code at [https://github.com/aws-samples](https://github.com/aws-samples/sample-amazon-connect-social-integration)
+Check out the code at [Github](https://github.com/aws-samples/sample-amazon-connect-social-integration)
 
 
 ## What you'll build
@@ -102,20 +102,6 @@ The handler checks DynamoDB for an existing chat session using the sender's Inst
 - If a session exists, it sends the message using the stored `connectionToken`. If the token is expired (AccessDeniedException), it automatically creates a new session.
 - If no session exists, it calls `StartChatContact` to create a new Amazon Connect Chat, starts contact streaming to the SNS topic, creates a participant connection, and stores everything in DynamoDB.
 
-```python
-def start_chat_and_stream(self, message, userId, channel, userName=None, systemNumber=None):
-    start_chat_response = self.start_chat(
-        message=message, userId=userId, channel=channel, userName=userName
-    )
-    participantToken = start_chat_response["ParticipantToken"]
-    contactId = start_chat_response['ContactId']
-    
-    self.start_stream(contactId)  # Enable streaming to SNS
-    create_connection_response = self.create_connection(participantToken)
-    connectionToken = create_connection_response['ConnectionCredentials']['ConnectionToken']
-    
-    return contactId, participantToken, connectionToken
-```
 
 ### 4. Attachment Handling (Inbound)
 
@@ -179,7 +165,7 @@ When a participant leaves or the chat ends, the handler deletes the connection r
 | Inbound (customer → agent) | ✅ | ✅ | — |
 | Outbound (agent → customer) | ✅ | ✅ | ✅ |
 
-Sending documents from the Instagram user app is not currently possible, but customers can receive documents sent by agents from Amazon Connect.
+Sending documents from the Instagram user app is not currently possible (instagram app limitations), but customers can receive documents sent by agents from Amazon Connect.
 
 ## What Gets Deployed
 
@@ -195,6 +181,21 @@ Sending documents from the Instagram user app is not currently possible, but cus
 | `/meta/instagram/config` | SSM Parameter Store | Holds Connect instance ID, contact flow ID, verification token, and Instagram account ID |
 | `/meta/instagram/webhook/url` | SSM Parameter Store | Stores the deployed API Gateway callback URL |
 
+
+## Cost Estimation
+
+Example scenario: 1,000 conversations per month, averaging 10 messages each (5 inbound + 5 outbound), totaling 10,000 messages.
+
+| Component | Estimated Monthly Cost | Notes |
+|---|---|---|
+| Infrastructure (API GW, Lambda, DynamoDB, SNS, Secrets Manager) | ~$0.71 | Negligible at this scale |
+| Amazon Connect Chat (Inbound) | $20.00 | 5,000 msgs × $0.004/msg |
+| Amazon Connect Chat (Outbound) | $20.00 | 5,000 msgs × $0.004/msg |
+| **Total** | **~$40.71** | |
+
+The infrastructure cost is minimal — Amazon Connect Chat messaging is the primary cost driver at $0.004 per message in each direction. See [Amazon Connect pricing](https://aws.amazon.com/connect/pricing/) for current rates.
+
+To reduce Connect Chat costs on high-volume conversations, consider adding a [message buffering layer](https://github.com/aws-samples/sample-whatsapp-end-user-messaging-connect-chat/tree/main/whatsapp-eum-connect-chat) to aggregate rapid consecutive messages.
 
 ## Deployment Prerequisites
 
@@ -255,28 +256,14 @@ Follow the instructions in the [CDK Deployment Guide](https://github.com/aws-sam
 
 ### Step 1: Update the Instagram Access Token in Secrets Manager
 
-The stack creates a Secrets Manager secret named `instagram-token` with a placeholder value. Update it with your actual Instagram User Access Token:
-
-```bash
-aws secretsmanager put-secret-value \
-  --secret-id instagram-token \
-  --secret-string "{YOUR_INSTAGRAM_ACCESS_TOKEN}"
-```
+The stack creates a Secrets Manager secret named [`instagram-token`](https://console.aws.amazon.com/secretsmanager/secret?name=instagram-token) with a placeholder value. Update it with your actual Instagram User Access Token.
 
 See the [Instagram Setup Guide](https://github.com/aws-samples/sample-amazon-connect-social-integration/blob/main/instagram_setup.md) for how to generate this token.
 
 ### Step 2: Update the SSM Configuration Parameter
 
-After deployment, update the SSM parameter `/meta/instagram/config` with your Amazon Connect and Instagram details:
+After deployment,  go to [AWS Systems Manager - Parameter Store](https://console.aws.amazon.com/systems-manager/parameters) and update the SSM parameter  `/meta/instagram/config` with your Amazon Connect and Instagram details:
 
-```json
-{
-  "instance_id": "<your-connect-instance-id>",
-  "contact_flow_id": "<your-contact-flow-id>",
-  "INSTAGRAM_VERIFICATION_TOKEN": "<a-secret-string-you-choose>",
-  "instagram_account_id": "<your-instagram-business-account-id>"
-}
-```
 
 | Parameter | Description |
 |---|---|
@@ -287,6 +274,7 @@ After deployment, update the SSM parameter `/meta/instagram/config` with your Am
 
 To find your `instagram_account_id`:
 
+
 - In your Meta App Dashboard → Instagram → API Setup with Instagram Login → expand "1. Generate access tokens" → the ID is underneath the linked Instagram account
 - Or call the Graph API:
 
@@ -295,6 +283,7 @@ curl -X GET "https://graph.instagram.com/me?fields=id,username,account_type,user
 ```
 
 The `user_id` field in the response is your `instagram_account_id`.
+
 
 ### Step 3: Configure the Webhook in Meta App Dashboard
 
@@ -309,12 +298,17 @@ For full details, see the [Instagram Setup Guide](https://github.com/aws-samples
 
 Go to your Amazon Connect instance and [open the Contact Control Panel (CCP)](https://docs.aws.amazon.com/connect/latest/adminguide/launch-ccp.html).
 
+<div align="center">
+<video src="https://github.com/user-attachments/assets/5f6d988b-5340-4b32-ac1b-ec85114adb2b" width="540" controls></video>
+</div>
+
 Try these scenarios:
 
 - Send a DM to your Instagram Business account from another Instagram account — it should appear as a new chat contact in the CCP
 - Reply from the CCP — the response should arrive in the customer's Instagram DMs
 - Send an image from Instagram — it should appear as an image attachment in the agent's chat
 - From the agent side, send an image or document — it should appear in the customer's Instagram DMs
+
 
 ## Important Considerations around Instagram
 
@@ -344,7 +338,6 @@ Instagram provides a **7-day human agent messaging window** for conversations th
 This solution handles the core Instagram-to-Connect messaging flow. Some ideas to extend it:
 
 - Add support for Instagram Stories mentions and replies
-- Implement message buffering to aggregate rapid consecutive messages (similar to the [WhatsApp Message Buffering](https://github.com/aws-samples/sample-whatsapp-end-user-messaging-connect-chat/tree/main/whatsapp-eum-connect-chat) pattern)
 - Use Amazon Bedrock to analyze inbound images and provide agents with context before they respond
 - Combine with the [Facebook Messenger integration](https://github.com/aws-samples/sample-amazon-connect-social-integration/tree/main/facebook-messenger-connect-chat) to handle both Meta channels from a single Amazon Connect instance
 
@@ -352,7 +345,6 @@ This solution handles the core Instagram-to-Connect messaging flow. Some ideas t
 
 - [Project Repository](https://github.com/aws-samples/sample-amazon-connect-social-integration)
 - [Amazon Connect Administrator Guide](https://docs.aws.amazon.com/connect/latest/adminguide/what-is-amazon-connect.html)
-- [Amazon Connect Participant API — StartAttachmentUpload](https://docs.aws.amazon.com/connect-participant/latest/APIReference/API_StartAttachmentUpload.html)
 - [Instagram Messaging API — Overview](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/messaging-api)
 - [Instagram Graph API — User Profile](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/api-reference)
 - [Meta Webhooks — Getting Started](https://developers.facebook.com/docs/graph-api/webhooks/getting-started)

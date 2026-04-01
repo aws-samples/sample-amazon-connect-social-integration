@@ -237,6 +237,21 @@ When a participant leaves or the chat ends, the handler deletes the connection r
 | `/meta/messenger/config` | SSM Parameter Store | Holds Connect instance ID, contact flow ID, verification token, and Page ID |
 | `/meta/messenger/webhook/url` | SSM Parameter Store | Stores the deployed API Gateway callback URL |
 
+## Cost Estimation
+
+Example scenario: 1,000 conversations per month, averaging 10 messages each (5 inbound + 5 outbound), totaling 10,000 messages.
+
+| Component | Estimated Monthly Cost | Notes |
+|---|---|---|
+| Infrastructure (API GW, Lambda, DynamoDB, SNS, Secrets Manager) | ~$0.71 | Negligible at this scale |
+| Amazon Connect Chat (Inbound) | $20.00 | 5,000 msgs × $0.004/msg |
+| Amazon Connect Chat (Outbound) | $20.00 | 5,000 msgs × $0.004/msg |
+| **Total** | **~$40.71** | |
+
+The infrastructure cost is minimal — Amazon Connect Chat messaging is the primary cost driver at $0.004 per message in each direction. See [Amazon Connect pricing](https://aws.amazon.com/connect/pricing/) for current rates.
+
+To reduce Connect Chat costs on high-volume conversations, consider adding a [message buffering layer](https://github.com/aws-samples/sample-whatsapp-end-user-messaging-connect-chat/tree/main/whatsapp-eum-connect-chat) to aggregate rapid consecutive messages.
+
 ## Deployment Prerequisites
 
 Before getting started you'll need:
