@@ -2,7 +2,7 @@
 
 Bidirectional messaging between Facebook Messenger and Amazon Connect Chat. Handles inbound customer messages and outbound agent responses with session management and attachment support.
 
-![Architecture Diagram](<!-- TODO: add architecture diagram -->)
+![Architecture Diagram](facebook-messengar-chat.svg)
 
 ## How It Works
 
@@ -51,8 +51,8 @@ When a chat session expires or the participant leaves, the connection is cleaned
 
 | Direction | Text | Images | Videos | Audio | Files |
 |---|---|---|---|---|---|
-| Inbound (customer → agent) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Outbound (agent → customer) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Inbound (customer → agent) | ✅ | ✅ | - | - | ✅ |
+| Outbound (agent → customer) | ✅ | ✅ | - | - | ✅ |
 
 ## What Gets Deployed
 
@@ -65,7 +65,7 @@ When a chat session expires or the participant leaves, the connection is cleaned
 | Messenger Users table | DynamoDB | Caches Messenger user profiles (TTL-based expiry) |
 | `messages_out` topic | SNS | Delivers Amazon Connect streaming events to the Outbound Handler |
 | `messenger-page-token` | Secrets Manager | Stores the Facebook Page Access Token |
-| `/meta/messenger/config` | SSM Parameter Store | Holds Connect instance ID, contact flow ID, verification token, and Page ID |
+| `/meta/messenger/config` | SSM Parameter Store | Holds Connect instance ID, contact flow ID, verification token|
 | `/meta/messenger/webhook/url` | SSM Parameter Store | Stores the deployed API Gateway callback URL |
 
 ## Deployment
@@ -104,7 +104,7 @@ After deployment, go to [AWS Systems Manager — Parameter Store](https://consol
 | `instance_id` | Amazon Connect instance ID (from the instance ARN) |
 | `contact_flow_id` | Inbound contact flow ID (from the flow ARN) |
 | `MESSENGER_VERIFICATION_TOKEN` | A secret string you choose — must match what you enter in the Meta webhook config |
-| `page_id` | Your Facebook Page ID (from the App Dashboard → Messenger → Settings → Access Tokens) |
+
 
 ### 3. Configure the Webhook in Meta App Dashboard
 
@@ -117,31 +117,20 @@ For full details, see [Facebook Setup Guide — Step 4](../facebook_setup.md#ste
 
 ## Testing
 
+
+<div align="center">
+<video src="https://github.com/user-attachments/assets/27ff5980-91cc-4db6-8c4b-88e82cd0def0" width="540" controls></video>
+</div>
+
+
 1. Open the CCP or Agent Workspace in your Amazon Connect instance.
 2. Send a message to your Facebook Page from another Facebook account (or the same account if testing in development mode).
 3. The message should appear in the CCP as a new chat contact.
 4. Reply from the CCP and verify the response arrives in Messenger.
 5. Try sending images and attachments in both directions.
 
-<!-- TODO: edit demo video -->
 
-### Verify Webhook Delivery
-
-Check your Lambda logs in CloudWatch to confirm webhook events are being received:
-
-```bash
-aws logs tail /aws/lambda/FB-CONNECT-CHAT-L-MsgIN --follow
-```
-
-### Test Webhook Verification
-
-```bash
-curl -s "https://YOUR_API_URL/messages?hub.mode=subscribe&hub.verify_token=YOUR_VERIFY_TOKEN&hub.challenge=test123"
-```
-
-Should return: `test123`
-
-## Important Considerations
+## Important Considerations around Facebook
 
 ### 24-Hour Messaging Window
 
@@ -153,8 +142,6 @@ Facebook Messenger has a **24-hour standard messaging window**:
 ### Rate Limits
 
 - Messenger Platform has rate limits based on your app's usage tier.
-- Monitor API response headers for rate limit information.
-- Implement exponential backoff for retries.
 
 ### App Review
 
