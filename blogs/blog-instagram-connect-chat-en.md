@@ -1,4 +1,4 @@
-# Instagram DMs to Amazon Connect Chat — Bidirectional Messaging Integration
+# Instagram DMs & Amazon Connect Chat 
 
 <table>
 <tr>
