@@ -66,8 +66,7 @@ def send_messenger_text(access_token, text_message, recipient_id):
 
     data = json.dumps(payload).encode("utf-8")
 
-    print("payload:", payload)
-    print(f"Request URL: {url}")
+    print(f"Sending text to recipient: {recipient_id}")
 
     req = urllib.request.Request(
         url_with_token, data=data, headers={"Content-Type": "application/json"}
@@ -76,7 +75,7 @@ def send_messenger_text(access_token, text_message, recipient_id):
     try:
         with urllib.request.urlopen(req) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             result = json.loads(response.read().decode("utf-8"))
-            print(f"Message sent successfully: {result}")
+            print(f"Message sent successfully to: {recipient_id}")
             return result
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8")
@@ -137,8 +136,7 @@ def send_messenger_attachment(access_token, attachment_url, mime_type, recipient
 
     data = json.dumps(payload).encode("utf-8")
 
-    print("payload:", payload)
-    print(f"Request URL: {url}")
+    print(f"Sending attachment to recipient: {recipient_id}")
 
     req = urllib.request.Request(
         url_with_token, data=data, headers={"Content-Type": "application/json"}
@@ -147,7 +145,7 @@ def send_messenger_attachment(access_token, attachment_url, mime_type, recipient
     try:
         with urllib.request.urlopen(req) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             result = json.loads(response.read().decode("utf-8"))
-            print(f"Attachment sent successfully: {result}")
+            print(f"Attachment sent successfully to: {recipient_id}")
             return result
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8")

@@ -37,7 +37,7 @@ def get_ssm_parameter(parameter_name: str) -> Dict[str, Any]:
         # Parse JSON
         try:
             config = json.loads(parameter_value)
-            logger.info(f"Successfully parsed SSM parameter: {parameter_name}")
+            logger.info("Successfully parsed SSM parameter")
             return config
         except json.JSONDecodeError as e:
             logger.warning(f"Invalid JSON in SSM parameter {parameter_name}: {str(e)}")
@@ -104,9 +104,9 @@ def get_secret_value(secret_arn: str) -> str:
             return response['SecretBinary'].decode('utf-8')
             
     except secrets_client.exceptions.ResourceNotFoundException:
-        logger.error(f"Secret not found: {secret_arn}")
-        raise Exception(f"Secret not found: {secret_arn}")
+        logger.error("Secret not found")
+        raise Exception("Secret not found")
         
     except Exception as e:
-        logger.error(f"Failed to retrieve secret {secret_arn}: {str(e)}")
-        raise Exception(f"Failed to retrieve secret: {str(e)}")
+        logger.error(f"Failed to retrieve secret: {type(e).__name__}")
+        raise Exception("Failed to retrieve secret")
