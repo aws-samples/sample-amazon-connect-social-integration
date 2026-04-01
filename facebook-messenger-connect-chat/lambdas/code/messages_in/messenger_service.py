@@ -208,7 +208,7 @@ class MessengerService:
         
         # Defense-in-depth: ensure the URL uses HTTPS scheme only
         if not url.startswith("https://"):
-            logger.error(f"Constructed URL does not use HTTPS scheme: {url}")
+            logger.error("Constructed URL does not use HTTPS scheme")
             return None
         
         try:

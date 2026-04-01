@@ -59,9 +59,8 @@ def send_instagram_text(access_token, text_message, recipient_id, instagram_acco
 
     data = json.dumps(payload).encode("utf-8")
 
-    print ("payload:", payload)
+    print(f"Sending text to recipient: {recipient_id}")
 
-    print(f"Request URL: {url}")
     req = urllib.request.Request(
         url, data=data, headers={"Content-Type": "application/json"}
     )
@@ -69,7 +68,7 @@ def send_instagram_text(access_token, text_message, recipient_id, instagram_acco
     try:
         with urllib.request.urlopen(req) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             result = json.loads(response.read().decode("utf-8"))
-            print(f"Message sent successfully: {result}")
+            print(f"Message sent successfully to: {recipient_id}")
             return result
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8")
@@ -121,9 +120,8 @@ def send_instagram_attachment(
 
     data = json.dumps(payload).encode("utf-8")
 
-    print("payload:", payload)
+    print(f"Sending attachment to recipient: {recipient_id}")
 
-    print(f"Request URL: {url}")
     req = urllib.request.Request(
         url, data=data, headers={"Content-Type": "application/json"}
     )
@@ -131,7 +129,7 @@ def send_instagram_attachment(
     try:
         with urllib.request.urlopen(req) as response:  # nosemgrep: dynamic-urllib-use-detected  # nosec B310
             result = json.loads(response.read().decode("utf-8"))
-            print(f"Attachment sent successfully: {result}")
+            print(f"Attachment sent successfully to: {recipient_id}")
             return result
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8")
