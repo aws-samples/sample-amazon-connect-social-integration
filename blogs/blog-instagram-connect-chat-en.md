@@ -298,7 +298,7 @@ The `user_id` field in the response is your `instagram_account_id`.
 ### Step 3: Configure the Webhook in Meta App Dashboard
 
 1. Go to your Meta App Dashboard → Instagram → API Setup with Instagram Login → Webhooks
-2. Set the **Callback URL** to the API Gateway URL. You can find it in the SSM parameter `/meta/instagram/webhook/url`
+2. Set the **Callback URL** to the API Gateway URL. You can find it in the SSM parameter `/meta/instagram/webhook/url` in [AWS Systems Manager - Parameter Store](https://console.aws.amazon.com/systems-manager/parameters)
 3. Set the **Verify Token** to the same value you used for `INSTAGRAM_VERIFICATION_TOKEN` above
 4. Subscribe to the `messages` webhook field
 

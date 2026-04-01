@@ -321,40 +321,25 @@ Follow the instructions in the [CDK Deployment Guide](https://github.com/aws-sam
 
 ### Step 1: Update the Page Access Token in Secrets Manager
 
-The stack creates a Secrets Manager secret named `messenger-page-token` with a placeholder value. Update it with your actual non-expiring Page Access Token:
-
-```bash
-aws secretsmanager put-secret-value \
-  --secret-id messenger-page-token \
-  --secret-string "{YOUR_NEVER_EXPIRING_PAGE_TOKEN}"
-```
+The stack creates a Secrets Manager secret named [`messenger-page-token`](https://console.aws.amazon.com/secretsmanager/secret?name=messenger-page-token) with a placeholder value. Update it with your actual non-expiring Page Access Token.
 
 See [Facebook Setup Guide — Step 5](https://github.com/aws-samples/sample-amazon-connect-social-integration/blob/main/facebook_setup.md#step-5-generate-a-long-lived-page-access-token) for how to generate a non-expiring token.
 
 ### Step 2: Update the SSM Configuration Parameter
 
-After deployment, update the SSM parameter `/meta/messenger/config` with your Amazon Connect and Facebook details:
+After deployment, go to [AWS Systems Manager - Parameter Store](https://console.aws.amazon.com/systems-manager/parameters) and update the SSM parameter `/meta/messenger/config` with your Amazon Connect and Facebook details:
 
-```json
-{
-  "instance_id": "<your-connect-instance-id>",
-  "contact_flow_id": "<your-contact-flow-id>",
-  "MESSENGER_VERIFICATION_TOKEN": "<a-secret-string-you-choose>",
-  "page_id": "<your-facebook-page-id>"
-}
-```
 
 | Parameter | Description |
 |---|---|
 | `instance_id` | Your Amazon Connect Instance ID |
 | `contact_flow_id` | The ID of the Inbound Contact Flow for chat |
 | `MESSENGER_VERIFICATION_TOKEN` | A secret string you choose — must match what you enter in the Meta webhook config |
-| `page_id` | Your Facebook Page ID (found in the Access Tokens section of the Meta App Dashboard) |
 
 ### Step 3: Configure the Webhook in Meta App Dashboard
 
 1. Go to your Meta App Dashboard → Messenger → Settings → Webhooks
-2. Set the **Callback URL** to the API Gateway URL. You can find it in the SSM parameter `/meta/messenger/webhook/url`
+2. Set the **Callback URL** to the API Gateway URL. You can find it in the SSM parameter `/meta/messenger/webhook/url` in [AWS Systems Manager - Parameter Store](https://console.aws.amazon.com/systems-manager/parameters)
 3. Set the **Verify Token** to the same value you used for `MESSENGER_VERIFICATION_TOKEN` above
 4. Subscribe to the `messages` webhook field (at minimum)
 5. Subscribe your Page to the app so it receives webhook events
@@ -407,11 +392,9 @@ Facebook Messenger has a **24-hour standard messaging window**:
 
 This solution handles the core Messenger-to-Connect messaging flow. Some ideas to extend it:
 
-- Implement message buffering to aggregate rapid consecutive messages (similar to the [WhatsApp Message Buffering](https://github.com/aws-samples/sample-whatsapp-end-user-messaging-connect-chat/tree/main/whatsapp-eum-connect-chat) pattern)
-- Add support for Messenger quick replies and structured messages (buttons, templates)
+- 
 - Use Amazon Bedrock to analyze inbound images and provide agents with context
 - Combine with the [Instagram DM integration](https://github.com/aws-samples/sample-amazon-connect-social-integration/tree/main/instagram-dm-connect-chat) to handle both Meta channels from a single Amazon Connect instance
-- Add webhook payload signature validation using the `X-Hub-Signature-256` header for additional security
 
 ### Leverage Amazon Connect Customer Profiles
 
@@ -421,9 +404,4 @@ This solution already fetches Messenger profile data (first name, last name, pro
 
 - [Project Repository](https://github.com/aws-samples/sample-amazon-connect-social-integration)
 - [Amazon Connect Administrator Guide](https://docs.aws.amazon.com/connect/latest/adminguide/what-is-amazon-connect.html)
-- [Amazon Connect Participant API — StartAttachmentUpload](https://docs.aws.amazon.com/connect-participant/latest/APIReference/API_StartAttachmentUpload.html)
-- [Messenger Platform — Overview](https://developers.facebook.com/docs/messenger-platform/)
-- [Messenger Platform — Send API Reference](https://developers.facebook.com/docs/messenger-platform/reference/send-api/)
-- [Messenger Platform — Webhook Events Reference](https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/)
-- [Facebook Page Access Tokens](https://developers.facebook.com/docs/pages/access-tokens)
 - [Facebook Setup Guide](https://github.com/aws-samples/sample-amazon-connect-social-integration/blob/main/facebook_setup.md)
