@@ -1,16 +1,26 @@
-# Facebook Messenger to Amazon Connect Chat — Bidirectional Messaging Integration
+# Facebook Messenger & Amazon Connect Chat
 
-   _Learn how to bridge Facebook Messenger and Amazon Connect Chat for seamless customer service. This step-by-step guide covers the full architecture using AWS CDK, AWS Lambda, Amazon API Gateway, Amazon DynamoDB, and Amazon Connect. From receiving customer messages to routing them to agents, forwarding agent replies back to Messenger, and handling attachments in both directions — all with automatic session management, echo prevention, and user profile caching via the Graph API._
+<table>
+<tr>
+<td width="50%">
 
+_Learn how to bridge Facebook Messenger and Amazon Connect Chat for seamless customer service. This step-by-step guide covers the full architecture using AWS CDK, AWS Lambda, Amazon API Gateway, Amazon DynamoDB, and Amazon Connect. From receiving customer messages to routing them to agents, forwarding agent replies back to Messenger, and handling attachments in both directions — all with automatic session management, echo prevention, and user profile caching via the Graph API._
 
-![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/facebook-messenger-connect-chat/facebook-messengar-chat.gif)
+</td>
+<td width="50%">
+
+![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/facebook-messenger-connect-chat/demo_messenger_connect_chat.gif)
+
+</td>
+</tr>
+</table>
 
 
 Facebook Messenger has over a billion active users. Many of them are already messaging your Facebook Page with questions about products, order status, or support requests. If your agents have to juggle between the Meta Business Suite and their contact center, context gets lost and response times suffer.
 
 In this blog, you'll learn how to connect Facebook Messenger directly to Amazon Connect Chat, so your agents handle Messenger conversations from the same workspace they use for every other channel. Messages flow in both directions — including images, documents, and files — with automatic session management and user profile enrichment.
 
-Check out the code at [https://github.com/aws-samples](https://github.com/aws-samples/sample-amazon-connect-social-integration)
+Check out the code at [Github](https://github.com/aws-samples/sample-amazon-connect-social-integration)
 
 
 ## What you'll build
@@ -355,6 +365,10 @@ For full details, see [Facebook Setup Guide — Step 4](https://github.com/aws-s
 
 Go to your Amazon Connect instance and [open the Contact Control Panel (CCP)](https://docs.aws.amazon.com/connect/latest/adminguide/launch-ccp.html).
 
+<div align="center">
+<video src="https://github.com/user-attachments/assets/27ff5980-91cc-4db6-8c4b-88e82cd0def0" width="540" controls></video>
+</div>
+
 Try these scenarios:
 
 - Send a message to your Facebook Page from another Facebook account — it should appear as a new chat contact in the CCP
@@ -398,6 +412,10 @@ This solution handles the core Messenger-to-Connect messaging flow. Some ideas t
 - Use Amazon Bedrock to analyze inbound images and provide agents with context
 - Combine with the [Instagram DM integration](https://github.com/aws-samples/sample-amazon-connect-social-integration/tree/main/instagram-dm-connect-chat) to handle both Meta channels from a single Amazon Connect instance
 - Add webhook payload signature validation using the `X-Hub-Signature-256` header for additional security
+
+### Leverage Amazon Connect Customer Profiles
+
+This solution already fetches Messenger profile data (first name, last name, profile picture) and passes it as contact attributes. You can take this further by integrating with [Amazon Connect Customer Profiles](https://docs.aws.amazon.com/connect/latest/adminguide/customer-profiles.html) to give agents a unified view of the customer across channels. Then in your Contact Flow, use the [Customer Profiles block](https://docs.aws.amazon.com/connect/latest/adminguide/customer-profiles-block.html) to retrieve the profile and display it in the agent workspace. The agent sees the customer's name, previous interaction history, and data from other channels — all before they even type a reply.
 
 ## Resources
 
