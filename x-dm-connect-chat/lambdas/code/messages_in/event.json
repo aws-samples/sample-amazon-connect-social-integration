@@ -1,0 +1,138 @@
+{
+    "resource": "/webhooks",
+    "path": "/webhooks",
+    "httpMethod": "POST",
+    "headers": {
+        "CloudFront-Forwarded-Proto": "https",
+        "CloudFront-Is-Desktop-Viewer": "true",
+        "CloudFront-Is-Mobile-Viewer": "false",
+        "CloudFront-Is-SmartTV-Viewer": "false",
+        "CloudFront-Is-Tablet-Viewer": "false",
+        "CloudFront-Viewer-ASN": "13414",
+        "CloudFront-Viewer-Country": "US",
+        "Content-Type": "application/json",
+        "Finagle-Ctx-com.twitter.finagle.Deadline": "1775080034686000000 1775080039642000000",
+        "Finagle-Ctx-com.twitter.finagle.Retries": "0",
+        "finagle-http-retryable-request": "",
+        "Host": "7yewquqc46.execute-api.us-west-2.amazonaws.com",
+        "User-Agent": "Amazon CloudFront",
+        "Via": "1.1 2c7ec03ffd7c736ec355aaff1580f434.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Id": "5Qca-p0zOGP2ofFYFT8B1cXngaljVE_BuDiHLmIrBEKPW5n3z_k64A==",
+        "X-Amzn-Trace-Id": "Root=1-69cd9262-6e5cf9a20c120760291e41c3",
+        "X-B3-Sampled": "false",
+        "X-B3-SpanId": "40200834282c95c1",
+        "X-B3-TraceId": "40200834282c95c1",
+        "X-Forwarded-For": "192.133.77.8, 3.172.20.80",
+        "X-Forwarded-Port": "443",
+        "X-Forwarded-Proto": "https",
+        "X-Twitter-Webhooks-Signature": "sha256=8Ev9fXTQJqhkm3vqChsn77SaqsA3ZuZUEwvoghH8TUI="
+    },
+    "multiValueHeaders": {
+        "CloudFront-Forwarded-Proto": [
+            "https"
+        ],
+        "CloudFront-Is-Desktop-Viewer": [
+            "true"
+        ],
+        "CloudFront-Is-Mobile-Viewer": [
+            "false"
+        ],
+        "CloudFront-Is-SmartTV-Viewer": [
+            "false"
+        ],
+        "CloudFront-Is-Tablet-Viewer": [
+            "false"
+        ],
+        "CloudFront-Viewer-ASN": [
+            "13414"
+        ],
+        "CloudFront-Viewer-Country": [
+            "US"
+        ],
+        "Content-Type": [
+            "application/json"
+        ],
+        "Finagle-Ctx-com.twitter.finagle.Deadline": [
+            "1775080034686000000 1775080039642000000"
+        ],
+        "Finagle-Ctx-com.twitter.finagle.Retries": [
+            "0"
+        ],
+        "finagle-http-retryable-request": [
+            ""
+        ],
+        "Host": [
+            "7yewquqc46.execute-api.us-west-2.amazonaws.com"
+        ],
+        "User-Agent": [
+            "Amazon CloudFront"
+        ],
+        "Via": [
+            "1.1 2c7ec03ffd7c736ec355aaff1580f434.cloudfront.net (CloudFront)"
+        ],
+        "X-Amz-Cf-Id": [
+            "5Qca-p0zOGP2ofFYFT8B1cXngaljVE_BuDiHLmIrBEKPW5n3z_k64A=="
+        ],
+        "X-Amzn-Trace-Id": [
+            "Root=1-69cd9262-6e5cf9a20c120760291e41c3"
+        ],
+        "X-B3-Sampled": [
+            "false"
+        ],
+        "X-B3-SpanId": [
+            "40200834282c95c1"
+        ],
+        "X-B3-TraceId": [
+            "40200834282c95c1"
+        ],
+        "X-Forwarded-For": [
+            "192.133.77.8, 3.172.20.80"
+        ],
+        "X-Forwarded-Port": [
+            "443"
+        ],
+        "X-Forwarded-Proto": [
+            "https"
+        ],
+        "X-Twitter-Webhooks-Signature": [
+            "sha256=8Ev9fXTQJqhkm3vqChsn77SaqsA3ZuZUEwvoghH8TUI="
+        ]
+    },
+    "queryStringParameters": null,
+    "multiValueQueryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+        "resourceId": "lbmwk0",
+        "resourcePath": "/webhooks",
+        "httpMethod": "POST",
+        "extendedRequestId": "bKPPfFCNPHcERug=",
+        "requestTime": "01/Apr/2026:21:47:14 +0000",
+        "path": "/prod/webhooks",
+        "accountId": "643504311277",
+        "protocol": "HTTP/1.1",
+        "stage": "prod",
+        "domainPrefix": "7yewquqc46",
+        "requestTimeEpoch": 1775080034712,
+        "requestId": "bba6ffb2-ed16-4870-91c3-fcb4b7c980f6",
+        "identity": {
+            "cognitoIdentityPoolId": null,
+            "accountId": null,
+            "cognitoIdentityId": null,
+            "caller": null,
+            "sourceIp": "192.133.77.8",
+            "principalOrgId": null,
+            "accessKey": null,
+            "cognitoAuthenticationType": null,
+            "cognitoAuthenticationProvider": null,
+            "userArn": null,
+            "userAgent": "Amazon CloudFront",
+            "user": null
+        },
+        "domainName": "xxxxxxxxxx.execute-api.us-west-2.amazonaws.com",
+        "deploymentId": "xxxxxx",
+        "apiId": "xxxxxxxxxx"
+    },
+    "body": "{\"for_user_id\":\"40876567\",\"direct_message_events\":[{\"type\":\"message_create\",\"id\":\"2039459599745679612\",\"created_timestamp\":\"1775080034563\",\"message_create\":{\"target\":{\"recipient_id\":\"40876567\"},\"sender_id\":\"55125386\",\"message_data\":{\"text\":\"Hola2\",\"entities\":{\"hashtags\":[],\"symbols\":[],\"user_mentions\":[],\"urls\":[]}}}}],\"users\":{\"55125386\":{\"id\":\"55125386\",\"created_timestamp\":\"1247109333000\",\"name\":\"Elizabeth Fuentes\",\"screen_name\":\"ElizabethFue12\",\"location\":\"San Francisco, CA\",\"description\":\"AWS Developer Advocate \\ud83c\\uddfb\\ud83c\\uddea\\ud83c\\udde8\\ud83c\\uddf1. I work for @AWSCloud & my opinions are my own. Soy desierto, selva, nieve y volc\\u00e1n\\u2026\",\"url\":\"https:\\/\\/t.co\\/0hRAxShvGA\",\"protected\":false,\"verified\":false,\"followers_count\":1146,\"friends_count\":1050,\"statuses_count\":32629,\"profile_image_url\":\"http:\\/\\/pbs.twimg.com\\/profile_images\\/1603384697035182080\\/iQFwc3l3_normal.jpg\",\"profile_image_url_https\":\"https:\\/\\/pbs.twimg.com\\/profile_images\\/1603384697035182080\\/iQFwc3l3_normal.jpg\"},\"40876567\":{\"id\":\"40876567\",\"created_timestamp\":\"1242654699000\",\"name\":\"Ensamblador\",\"screen_name\":\"ensamblador\",\"location\":\"Santiago, Chile\",\"description\":\"I build cool things in aws https:\\/\\/t.co\\/1NROf4ljpQ\\nI post my own opinions.\",\"protected\":false,\"verified\":false,\"followers_count\":6131,\"friends_count\":376,\"statuses_count\":43292,\"profile_image_url\":\"http:\\/\\/pbs.twimg.com\\/profile_images\\/1281676323749011456\\/kJjBtbmw_normal.jpg\",\"profile_image_url_https\":\"https:\\/\\/pbs.twimg.com\\/profile_images\\/1281676323749011456\\/kJjBtbmw_normal.jpg\"}}}",
+    "isBase64Encoded": false
+}
