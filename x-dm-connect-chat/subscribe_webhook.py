@@ -12,7 +12,7 @@ import boto3
 import requests
 from requests_oauthlib import OAuth1
 
-SECRET_NAME = "x-dm-credentials"
+SECRET_NAME = "x-dm-credentials"  # nosec B105 — not a password, this is a Secrets Manager key name
 
 
 def get_credentials():

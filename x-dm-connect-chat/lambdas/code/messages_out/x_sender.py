@@ -1,7 +1,7 @@
 import logging
 import tempfile
 import os
-import urllib.request
+import requests as http_requests
 import tweepy
 
 logger = logging.getLogger()
@@ -82,10 +82,14 @@ def send_x_attachment(credentials, attachment_url, mime_type, recipient_id):
     try:
         # Download the attachment to a temp file
         suffix = _get_file_extension(mime_type)
-        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_file:
-            tmp_path = tmp_file.name
-            urllib.request.urlretrieve(attachment_url, tmp_path)  # nosec B310 — URL is a pre-signed S3 URL from Connect
-            tmp_file.flush()
+        tmp_file = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+        tmp_path = tmp_file.name
+        tmp_file.close()
+
+        resp = http_requests.get(attachment_url, timeout=30)
+        resp.raise_for_status()
+        with open(tmp_path, 'wb') as f:
+            f.write(resp.content)
 
         logger.info(f"Downloaded attachment to {tmp_path}")
 

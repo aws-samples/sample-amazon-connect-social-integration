@@ -9,7 +9,7 @@ import json
 import boto3
 import tweepy
 
-SECRET_NAME = "x-dm-credentials"
+SECRET_NAME = "x-dm-credentials"  # nosec B105 — not a password, this is a Secrets Manager key name
 
 
 def get_credentials():
