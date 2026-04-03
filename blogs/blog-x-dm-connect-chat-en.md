@@ -42,7 +42,7 @@ Here's how it flows:
 
 1. A customer sends a DM on X. The Account Activity API delivers the webhook event to an API Gateway endpoint
 2. The Inbound Handler Lambda validates the webhook (CRC challenge), parses the message, and looks up or creates an Amazon Connect Chat session
-3. The customer's X profile is fetched via the Tweepy SDK and cached in DynamoDB
+3. The customer's X profile (if not present in request) is fetched via the Tweepy SDK and cached in DynamoDB
 4. Text messages and attachments are forwarded into the Connect Chat session via the Participant API
 5. When an agent replies, Amazon Connect publishes the event to an SNS topic via contact streaming
 6. The Outbound Handler Lambda picks up the SNS event, looks up the customer's X user ID, and sends the reply back as a DM through the Tweepy SDK
