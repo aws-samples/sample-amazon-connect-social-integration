@@ -27,6 +27,7 @@ def get_bearer_token(creds):
         "https://api.x.com/oauth2/token",
         auth=(creds["consumer_key"], creds["consumer_secret"]),
         data={"grant_type": "client_credentials"},
+        timeout=30,
     )
     resp.raise_for_status()
     return resp.json()["access_token"]
@@ -37,6 +38,7 @@ def get_webhook_id(bearer_token):
     resp = requests.get(
         "https://api.x.com/2/webhooks",
         headers={"Authorization": f"Bearer {bearer_token}"},
+        timeout=30,
     )
     resp.raise_for_status()
     data = resp.json().get("data", [])
@@ -59,7 +61,8 @@ def subscribe(creds, webhook_id):
         creds["access_token_secret"],
     )
     url = f"https://api.x.com/2/account_activity/webhooks/{webhook_id}/subscriptions/all"
-    resp = requests.post(url, auth=oauth)
+    resp = requests.post(url, auth=oauth, timeout=30)
+    resp.raise_for_status()
     return resp
 
 
@@ -76,17 +79,21 @@ def main():
         return
 
     print(f"\nSubscribing to webhook {webhook_id}...")
-    resp = subscribe(creds, webhook_id)
-
-    if resp.status_code in (200, 204):
-        print("  ✓ Subscription created successfully")
-        if resp.text:
-            print(f"    {resp.text}")
-    elif resp.status_code == 409:
-        print("  ✓ Already subscribed")
-    else:
-        print(f"  ✗ Failed — HTTP {resp.status_code}")
-        print(f"    {resp.text}")
+    try:
+        resp = subscribe(creds, webhook_id)
+        if resp.status_code in (200, 204):
+            print("  ✓ Subscription created successfully")
+            if resp.text:
+                print(f"    {resp.text}")
+        elif resp.status_code == 409:
+            print("  ✓ Already subscribed")
+    except requests.exceptions.HTTPError as e:
+        resp = e.response
+        if resp is not None and resp.status_code == 409:
+            print("  ✓ Already subscribed")
+        else:
+            print(f"  ✗ Failed — HTTP {resp.status_code if resp is not None else 'unknown'}")
+            print(f"    {resp.text if resp is not None else str(e)}")
 
 
 if __name__ == "__main__":

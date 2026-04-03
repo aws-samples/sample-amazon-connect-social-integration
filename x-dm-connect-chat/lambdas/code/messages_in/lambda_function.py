@@ -131,11 +131,16 @@ def attachment_message_handler(message, connect_chat_service, table_service, use
     new_connection_token = None
     connection_token = None
 
+    caption_text = message.text.strip() if message.text else None
+    caption_sent = False
+
     if contact:
         logger.info(f"Found existing contact for attachment: {contact['contactId']}")
         connection_token = contact["connectionToken"]
     else:
-        initial_text = f"[Sent {message.attachment_type or 'media'}]"
+        initial_text = caption_text or f"[Sent {message.attachment_type or 'media'}]"
+        if caption_text:
+            caption_sent = True
         logger.info(f"New contact from attachment: {message.sender_id}")
         new_contact_id, new_participant_token, new_connection_token = (
             connect_chat_service.start_chat_and_stream(
@@ -180,6 +185,10 @@ def attachment_message_handler(message, connect_chat_service, table_service, use
         connect_chat_service.send_message(f"[{message.attachment_type} attachment]: {att_url}", connection_token)
     else:
         logger.info(f"Attachment uploaded to Connect: {attachment_id}")
+
+    # Send caption text if it wasn't already used as the initial message
+    if caption_text and not caption_sent:
+        connect_chat_service.send_message(caption_text, connection_token)
 
     return new_contact_id, new_participant_token, new_connection_token
 

@@ -129,9 +129,9 @@
             "userAgent": "Amazon CloudFront",
             "user": null
         },
-        "domainName": "7yewquqc46.execute-api.us-west-2.amazonaws.com",
-        "deploymentId": "gjksdc",
-        "apiId": "7yewquqc46"
+        "domainName": "xxxxxxxxxx.execute-api.us-west-2.amazonaws.com",
+        "deploymentId": "xxxxxx",
+        "apiId": "xxxxxxxxxx"
     },
     "body": "{\"for_user_id\":\"40876567\",\"direct_message_events\":[{\"type\":\"message_create\",\"id\":\"2039459599745679612\",\"created_timestamp\":\"1775080034563\",\"message_create\":{\"target\":{\"recipient_id\":\"40876567\"},\"sender_id\":\"55125386\",\"message_data\":{\"text\":\"Hola2\",\"entities\":{\"hashtags\":[],\"symbols\":[],\"user_mentions\":[],\"urls\":[]}}}}],\"users\":{\"55125386\":{\"id\":\"55125386\",\"created_timestamp\":\"1247109333000\",\"name\":\"Elizabeth Fuentes\",\"screen_name\":\"ElizabethFue12\",\"location\":\"San Francisco, CA\",\"description\":\"AWS Developer Advocate \\ud83c\\uddfb\\ud83c\\uddea\\ud83c\\udde8\\ud83c\\uddf1. I work for @AWSCloud & my opinions are my own. Soy desierto, selva, nieve y volc\\u00e1n\\u2026\",\"url\":\"https:\\/\\/t.co\\/0hRAxShvGA\",\"protected\":false,\"verified\":false,\"followers_count\":1146,\"friends_count\":1050,\"statuses_count\":32629,\"profile_image_url\":\"http:\\/\\/pbs.twimg.com\\/profile_images\\/1603384697035182080\\/iQFwc3l3_normal.jpg\",\"profile_image_url_https\":\"https:\\/\\/pbs.twimg.com\\/profile_images\\/1603384697035182080\\/iQFwc3l3_normal.jpg\"},\"40876567\":{\"id\":\"40876567\",\"created_timestamp\":\"1242654699000\",\"name\":\"Ensamblador\",\"screen_name\":\"ensamblador\",\"location\":\"Santiago, Chile\",\"description\":\"I build cool things in aws https:\\/\\/t.co\\/1NROf4ljpQ\\nI post my own opinions.\",\"protected\":false,\"verified\":false,\"followers_count\":6131,\"friends_count\":376,\"statuses_count\":43292,\"profile_image_url\":\"http:\\/\\/pbs.twimg.com\\/profile_images\\/1281676323749011456\\/kJjBtbmw_normal.jpg\",\"profile_image_url_https\":\"https:\\/\\/pbs.twimg.com\\/profile_images\\/1281676323749011456\\/kJjBtbmw_normal.jpg\"}}}",
     "isBase64Encoded": false

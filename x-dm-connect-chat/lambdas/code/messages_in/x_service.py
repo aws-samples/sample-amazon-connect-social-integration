@@ -43,6 +43,18 @@ class XMessage:
                 if not self.attachment_url and variants:
                     self.attachment_url = variants[0].get('url')
 
+            # Strip the auto-appended t.co media link from the caption text
+            if self.text:
+                entities = message_data.get('entities', {})
+                urls = entities.get('urls', [])
+                # Remove URL entities from text in reverse order to preserve indices
+                clean_text = self.text
+                for url_entity in sorted(urls, key=lambda u: u.get('indices', [0])[0], reverse=True):
+                    indices = url_entity.get('indices', [])
+                    if len(indices) == 2:
+                        clean_text = clean_text[:indices[0]] + clean_text[indices[1]:]
+                self.text = clean_text.strip() or None
+
         # Determine message type
         if self.attachment_url:
             self.message_type = 'attachment'

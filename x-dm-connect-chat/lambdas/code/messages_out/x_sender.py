@@ -84,7 +84,8 @@ def send_x_attachment(credentials, attachment_url, mime_type, recipient_id):
         suffix = _get_file_extension(mime_type)
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp_file:
             tmp_path = tmp_file.name
-            urllib.request.urlretrieve(attachment_url, tmp_path)  # nosec B310
+            urllib.request.urlretrieve(attachment_url, tmp_path)  # nosec B310 — URL is a pre-signed S3 URL from Connect
+            tmp_file.flush()
 
         logger.info(f"Downloaded attachment to {tmp_path}")
 
