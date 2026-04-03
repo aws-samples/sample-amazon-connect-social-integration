@@ -2,7 +2,11 @@
 
 Bidirectional messaging between X (Twitter) Direct Messages and Amazon Connect Chat. Handles inbound customer DMs and outbound agent responses with session management and attachment support.
 
-> **Encrypted DM Limitation:** End-to-end encrypted DMs are not accessible via the X API. This integration only processes non-encrypted (standard) DMs. If a user has E2EE enabled for a conversation, those messages will not be delivered to the webhook.
+> **Encrypted DM Limitation:** End-to-end encrypted DMs are not accessible via the X API. This integration only processes non-encrypted (standard) DMs. If a user has E2EE enabled for a conversation, those messages will not be delivered to the webhook. This a X API known limitation.
+
+## Architecture
+
+![Architecture Diagram](x-connect-chat.svg)
 
 ## How It Works
 
@@ -28,7 +32,7 @@ When an agent (human or AI) replies in Amazon Connect:
 2. The **Outbound Handler** Lambda receives the SNS record.
 3. It looks up the customer's X user ID from the connections table using the `contactId`.
 4. It sends the reply back to X as a DM using the Tweepy SDK (`client.create_direct_message`).
-5. **Attachments** from the agent are fetched via a signed URL, uploaded to X using `API.media_upload()` (OAuth 1.0a), and sent as a DM with the media attached. If the upload fails, the signed URL is sent as plain text.
+5. **Attachments** from the agent are fetched via a signed URL, uploaded to X using `API.media_upload()` or `API.chunked_upload()` (OAuth 1.0a) depending on the media type, and sent as a DM with the media attached. Unsupported media types (PDFs, documents) are sent as plain-text links. If the upload fails, the signed URL is sent as plain text.
 6. On chat disconnect events, the connection record is deleted from DynamoDB.
 
 ### CRC Webhook Validation
@@ -58,6 +62,15 @@ A DynamoDB table (`active_connections`) tracks every open conversation:
 
 When a chat session expires or the participant leaves, the connection is cleaned up so the next inbound message starts a fresh session.
 
+### Message Types Supported
+
+| Direction | Text | Images | Videos | GIFs |
+|---|---|---|---|---|
+| Inbound (customer → agent) | ✅ | ✅ | ✅ | ✅ |
+| Outbound (agent → customer) | ✅ | ✅ | ✅ | ✅ |
+
+_Unsupported media types (PDFs, documents, etc.) are sent as plain-text links._
+
 ## What Gets Deployed
 
 | Resource | Service | Purpose |
@@ -78,23 +91,10 @@ When a chat session expires or the participant leaves, the connection is cleaned
 
 These are **not** created by this stack — you need them before deploying:
 
-1. **X Developer Account with Pay-Per-Use Tier** — You need an X Developer Account with at least the **Pay-Per-Use** (formerly Basic) tier to access the Account Activity API and DM endpoints. See the [X Developer Account Setup](#x-developer-account-setup) section below.
-2. **X API Credentials** — Four OAuth 1.0a credentials: Consumer Key (API Key), Consumer Secret (API Secret), Access Token, and Access Token Secret. Generated from the X Developer Portal.
+1. **X Developer Account with Pay-Per-Use Tier** — You need an X Developer Account with at least the **Pay-Per-Use** (formerly Basic) tier to access the Account Activity API and DM endpoints. See the [X Platform Setup Guide](../x_setup.md) for detailed instructions.
+2. **X API Credentials** — Four OAuth 1.0a credentials: Consumer Key (API Key), Consumer Secret (API Secret), Access Token, and Access Token Secret. Generated from the X Developer Portal. See [X Platform Setup Guide — Steps 2 & 3](../x_setup.md#step-2-create-an-app).
 3. **Amazon Connect Instance ID** (`INSTANCE_ID`) — an existing Amazon Connect instance. See [Amazon Connect Prerequisites](../general_connect.md).
 4. **Chat Inbound Contact Flow ID** (`CONTACT_FLOW_ID`) — a contact flow configured for chat in that instance. See [Amazon Connect Prerequisites](../general_connect.md).
-
-### X Developer Account Setup
-
-1. Go to the [X Developer Portal](https://developer.x.com/) and sign up or log in.
-2. Create a new Project and App (or use an existing one).
-3. Select the **Pay-Per-Use** tier (required for Account Activity API access and DM read/write).
-4. In your App settings, enable **Read and Write** permissions under "User authentication settings" and ensure **Direct Messages** access is enabled.
-5. Navigate to **Keys and Tokens** and generate:
-   - **Consumer Key** (API Key)
-   - **Consumer Secret** (API Secret)
-   - **Access Token**
-   - **Access Token Secret**
-6. Save all four credentials — you will need them for the Secrets Manager configuration after deployment.
 
 ### Deploy using CDK
 
@@ -132,37 +132,19 @@ After deployment, go to [AWS Systems Manager — Parameter Store](https://consol
 | `contact_flow_id` | Inbound contact flow ID (from the flow ARN) |
 | `x_account_id` | Your X account's numeric user ID (the business account that will receive DMs) |
 
-**Note: To find your X account's numeric user ID:**
+**Note:** To find your `x_account_id`, run the included helper script or use the X API. See [X Platform Setup Guide — Step 4.2](../x_setup.md#42-update-the-ssm-configuration-parameter) for details.
 
-You can look it up using the X API:
-```bash
-curl -X GET "https://api.x.com/2/users/by/username/YOUR_X_HANDLE" \
-  -H "Authorization: Bearer YOUR_BEARER_TOKEN"
-```
+### 3. Register the Webhook and Subscribe Your Account
 
-Or use a third-party lookup tool — search for "X/Twitter user ID lookup" to find your numeric ID from your @handle.
+Follow [X Platform Setup Guide — Steps 5 & 6](../x_setup.md#step-5-register-the-webhook) to register your webhook URL with X and subscribe your account to receive DM events. The deployed webhook URL is stored in the SSM parameter `/x/dm/webhook/url`.
 
-### 3. Register the Webhook with X Account Activity API
-
-1. Find your deployed webhook URL in the [SSM parameter](https://console.aws.amazon.com/systems-manager/parameters) `/x/dm/webhook/url`.
-2. Register the webhook URL with the X Account Activity API v2:
-
-```bash
-curl -X POST "https://api.x.com/1.1/account_activity/all/YOUR_ENV_NAME/webhooks.json?url=YOUR_WEBHOOK_URL" \
-  -H "Authorization: OAuth ..." 
-```
-
-3. X will immediately send a CRC challenge (GET request) to your webhook URL. The Inbound Handler will respond with the HMAC-SHA256 hash automatically.
-4. Subscribe your app user to the webhook:
-
-```bash
-curl -X POST "https://api.x.com/1.1/account_activity/all/YOUR_ENV_NAME/subscriptions.json" \
-  -H "Authorization: OAuth ..."
-```
-
-> **Tip:** You can use [Tweepy](https://docs.tweepy.org/) or [Postman](https://www.postman.com/) to simplify OAuth 1.0a signed requests for webhook registration.
+The Inbound Handler responds to CRC challenges automatically — no manual configuration needed on the Lambda side.
 
 ## Testing
+
+<div align="center">
+<video src="https://github.com/user-attachments/assets/3fe667d9-1887-4acb-8ccf-3596d5c562a4" width="540" controls></video>
+</div>
 
 1. Open the CCP or Agent Workspace in your Amazon Connect instance.
 2. Send a Direct Message to your business X account from another X account.

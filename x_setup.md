@@ -306,13 +306,6 @@ curl --request PUT \
 3. Check your Amazon Connect agent workspace — the message should appear as a new chat contact
 4. Reply from the agent workspace and verify the response arrives as a DM on X
 
-### 7.3 Check Lambda Logs
-
-If messages aren't coming through, check the Inbound Handler Lambda logs:
-
-```bash
-aws logs tail /aws/lambda/XDmConnectChatStack-MsgIN --follow --region us-west-2
-```
 
 ### 7.4 Common Test Issues
 
@@ -375,18 +368,6 @@ curl --request PUT \
   --header 'Authorization: Bearer YOUR_BEARER_TOKEN'
 ```
 
-### Differences from Meta (Instagram / Facebook Messenger) Setup
-
-| Aspect | X (this project) | Meta (Instagram / Facebook) |
-|---|---|---|
-| Webhook verification | HMAC-SHA256 CRC (cryptographic) | Shared `hub.verify_token` string comparison |
-| Credentials | 4 OAuth 1.0a keys (Consumer Key/Secret + Access Token/Secret) | 1 Page Access Token |
-| Token expiry | Access Token does not expire (unless regenerated) | Requires long-lived token exchange flow |
-| Webhook registration | API call (`POST /2/webhooks`) | Configured in App Dashboard UI |
-| Subscription | Separate API call per user | Automatic with webhook field subscription |
-| App review | Not required for own-account DMs | Required for Advanced Access (production) |
-| DM limitations | XChat encrypted DMs not accessible | No equivalent limitation |
-
 ## Additional Resources
 
 ### Official X Documentation
@@ -404,8 +385,7 @@ curl --request PUT \
 ### Tools
 
 - 🔗 [Tweepy](https://docs.tweepy.org/) — Python SDK for the X API
-- 🔗 [twurl](https://github.com/twitter/twurl) — OAuth-aware curl for the X API
-- 🔗 [Postman X API Collection](https://www.postman.com/twitter/workspace/twitter-s-public-workspace/) — Pre-built API requests
+
 
 ### Helper Scripts (included in this project)
 
@@ -414,24 +394,3 @@ curl --request PUT \
 
 *This guide is based on X API documentation and Developer Console UI as of April 2026. Always refer to the [X Developer Documentation](https://docs.x.com/) for the most up-to-date information.*
 
----
-
-## Appendix: XChat Encrypted DMs — API Support Timeline
-
-As of April 2026, X has not provided a concrete timeline for XChat (encrypted DM) API support. Below are the official X Developer Relations responses, all from [@taycaldwell](https://devcommunity.x.com/u/taycaldwell):
-
-| Date | Quote | Source |
-|---|---|---|
-| Feb 3, 2026 | *"The DM endpoints for the X API v2 currently do not support XChat (encrypted) messages. We are exploring options to bring XChat support to the X API very soon."* | [Thread](https://devcommunity.x.com/t/x-api-bug-i-found-out-why-we-can-t-access-dms-after-conversation-upgraded/255763/2) |
-| Feb 18, 2026 | *"X Chat encrypted DM conversations are a newer feature of the X platform, they are currently not supported by the X API. We are currently exploring ways to bring X Chat support to the X API very soon."* | [Thread](https://devcommunity.x.com/t/activity-api-chat-webhooks-not-received/256906/4) |
-| Mar 23, 2026 | *"This is a known issue. The X API currently only supports legacy (unencrypted) DMs. We are exploring bringing support for encrypted Chat to the X API."* | [Thread](https://devcommunity.x.com/t/x-api-stops-returning-new-direct-messages-in-the-dm-events-endpoint/259751) |
-
-Key takeaways:
-- The response has been the same "exploring / very soon" for at least 2 months with no concrete ETA
-- There is no beta, no opt-in, and no workaround available
-- You cannot disable XChat per-account or per-conversation
-- Conversations can be silently auto-upgraded to XChat with no visible indicator
-- Multiple developers across different threads report the same issue
-- Follow events, like events, and other non-DM activities continue to work normally for encrypted accounts — only `direct_message_events` are affected
-
-Monitor the [X Developer Community](https://devcommunity.x.com/) for updates.

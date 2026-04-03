@@ -8,6 +8,7 @@ This repository provides code samples and patterns for integrating social media 
 |----------|-------------|------|
 | **[Facebook Messenger Integration](./facebook-messenger-connect-chat/README.md)** | Bidirectional messaging between Facebook Messenger and Amazon Connect Chat. Handles inbound customer messages and outbound agent responses with session management and attachment support. | CDK Python |
 | **[Instagram DM Integration](./instagram-dm-connect-chat/README.md)** | Bidirectional messaging between Instagram Direct Messages and Amazon Connect Chat. Handles inbound customer messages and outbound agent responses with session management and attachment support. | CDK Python |
+| **[X (Twitter) DM Integration](./x-dm-connect-chat/README.md)** | Bidirectional messaging between X (Twitter) Direct Messages and Amazon Connect Chat. Handles inbound customer DMs and outbound agent responses with session management and attachment support. | CDK Python |
 
 
 ## General Deployment Instructions
@@ -22,6 +23,7 @@ If you want to test these use cases, unless stated otherwise, follow this guide:
 
 - [Facebook Setup Guide](facebook_setup.md)
 - [Instagram Setup Guide](instagram_setup.md)
+- [X (Twitter) Setup Guide](x_setup.md)
 
 ## Security
 
