@@ -1,0 +1,55 @@
+{
+    "Records": [
+        {
+            "EventSource": "aws:sns",
+            "EventVersion": "1.0",
+            "EventSubscriptionArn": "arn:aws:sns:us-west-2:643504311277:X-DM-CONNECT-CHAT-MsgAoutmessagesout5D5307D6-uLoJ2ozbwKx7:817f3b79-4396-4e8c-bf49-8d0d652a00ec",
+            "Sns": {
+                "Type": "Notification",
+                "MessageId": "1130995a-9f6f-5c5d-aa0d-fb1d03324393",
+                "TopicArn": "arn:aws:sns:us-west-2:643504311277:X-DM-CONNECT-CHAT-MsgAoutmessagesout5D5307D6-uLoJ2ozbwKx7",
+                "Message": "{\"AbsoluteTime\":\"2026-04-01T22:20:13.466Z\",\"Content\":\"Connect con pago\",\"ContentType\":\"text/markdown\",\"Id\":\"019d4b22-031a-7f5a-985f-812613771c9f\",\"Type\":\"MESSAGE\",\"ParticipantId\":\"7bc2bf37-6e83-4426-9671-8048abe56ddc\",\"DisplayName\":\"Enrique\",\"ParticipantRole\":\"AGENT\",\"InitialContactId\":\"da81f813-70b0-496e-91ed-70f48771c522\",\"ContactId\":\"da81f813-70b0-496e-91ed-70f48771c522\"}",
+                "Timestamp": "2026-04-01T22:20:13.604Z",
+                "SignatureVersion": "1",
+                "Signature": "POK1Vo8tPbEgsCY4y1pwcwlUkOiQcZWuvpnJmLXkDxrLFUY1UeH8RP355qf6rIiHBSEixjQKE/wUI227RBzvLRjvaWiEfieb+/p7aYA/CsivtoyJW48NS+qjPDIeK3pT8yL7Z1uMVXeuZCMiWPK/qb7KyXC4F9D6lMQSZr+y8kejZ++3BjrgKengt5QVMqX9YL/w0zMhET0cCKMxi1HNUvhACOY2BFKvtW0RSSLV6m9sL/B6/vPZtIxbVvMW3Z55jRWIV+3a5NXvMgrUOQIUqE+GLwCL+Uo3qpxNB57oWK8RBZEaim4SWlzXpkesu+GIe1/liUqBjeKnvCwWAzhVPw==",
+                "SigningCertUrl": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-7506a1e35b36ef5a444dd1a8e7cc3ed8.pem",
+                "Subject": null,
+                "UnsubscribeUrl": "https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:643504311277:X-DM-CONNECT-CHAT-MsgAoutmessagesout5D5307D6-uLoJ2ozbwKx7:817f3b79-4396-4e8c-bf49-8d0d652a00ec",
+                "MessageAttributes": {
+                    "InitialContactId": {
+                        "Type": "String",
+                        "Value": "da81f813-70b0-496e-91ed-70f48771c522"
+                    },
+                    "MessageVisibility": {
+                        "Type": "String",
+                        "Value": "ALL"
+                    },
+                    "Type": {
+                        "Type": "String",
+                        "Value": "MESSAGE"
+                    },
+                    "AccountId": {
+                        "Type": "String",
+                        "Value": "643504311277"
+                    },
+                    "ContentType": {
+                        "Type": "String",
+                        "Value": "text/markdown"
+                    },
+                    "InstanceId": {
+                        "Type": "String",
+                        "Value": "30b0e238-b3bd-4f61-9f04-c0b24e4a2f74"
+                    },
+                    "ContactId": {
+                        "Type": "String",
+                        "Value": "da81f813-70b0-496e-91ed-70f48771c522"
+                    },
+                    "ParticipantRole": {
+                        "Type": "String",
+                        "Value": "AGENT"
+                    }
+                }
+            }
+        }
+    ]
+}

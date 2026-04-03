@@ -1,1 +1,4 @@
 .kiro
+.hypothesis
+.pytest_cache
+x-investigation.md
