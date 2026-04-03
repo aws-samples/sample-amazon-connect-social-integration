@@ -82,9 +82,7 @@ def send_x_attachment(credentials, attachment_url, mime_type, recipient_id):
     try:
         # Download the attachment to a temp file
         suffix = _get_file_extension(mime_type)
-        tmp_file = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
-        tmp_path = tmp_file.name
-        tmp_file.close()
+        tmp_path = os.path.join(tempfile.gettempdir(), f"x_media_{os.getpid()}{suffix}")
 
         resp = http_requests.get(attachment_url, timeout=30)
         resp.raise_for_status()
