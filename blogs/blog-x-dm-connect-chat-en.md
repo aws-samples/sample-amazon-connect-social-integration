@@ -9,7 +9,7 @@ _Learn how to bridge X (Twitter) Direct Messages and Amazon Connect Chat for sea
 </td>
 <td width="50%">
 
-![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/x-dm-connect-chat/x-connect-chat.gif)
+![Demo](https://raw.githubusercontent.com/aws-samples/sample-amazon-connect-social-integration/main/x-dm-connect-chat/demo_x_connect_chat.gif)
 
 </td>
 </tr>
@@ -136,7 +136,7 @@ The contact attributes include the channel name ("X"), the customer ID, and the 
 When a customer sends an image, GIF, or video, the handler downloads it from X's CDN and uploads it to the Connect Chat session. X media URLs come in two flavors:
 
 - `pbs.twimg.com` — publicly accessible, downloaded directly
-- `ton.twitter.com` — requires OAuth 1.0a authentication via Tweepy
+- `ton.twitter.com` — requires OAuth 1.0a authentication (using `requests_oauthlib`)
 
 The upload uses the three-step Participant API flow: `start_attachment_upload` → PUT to pre-signed URL → `complete_attachment_upload`. If anything fails, the handler falls back to sending the media URL as a text message.
 
@@ -224,9 +224,10 @@ Example scenario: 1,000 conversations per month, averaging 10 messages each (5 i
 | Infrastructure (API GW, Lambda, DynamoDB, SNS, Secrets Manager) | ~$0.71 | Negligible at this scale |
 | Amazon Connect Chat (Inbound) | $20.00 | 5,000 msgs × $0.004/msg |
 | Amazon Connect Chat (Outbound) | $20.00 | 5,000 msgs × $0.004/msg |
-| **Total** | **~$40.71** | |
+| X API — Outbound DMs | ~$50.00 | 5,000 DM sends × ~$0.01/request |
+| **Total** | **~$90.71** | |
 
-The infrastructure cost is minimal — Amazon Connect Chat messaging is the primary cost driver at $0.004 per message in each direction. See [Amazon Connect pricing](https://aws.amazon.com/connect/pricing/) for current rates.
+X API uses credit-based pay-per-use pricing. The per-endpoint cost shown above is approximate — actual rates are displayed in the [X Developer Console](https://console.x.com/) and may change. See [Amazon Connect pricing](https://aws.amazon.com/connect/pricing/) and [X API pricing](https://developer.x.com/en/products/twitter-api) for current rates.
 
 To reduce Connect Chat costs on high-volume conversations, consider adding a [message buffering layer](https://github.com/aws-samples/sample-whatsapp-end-user-messaging-connect-chat/tree/main/whatsapp-eum-connect-chat) to aggregate rapid consecutive messages.
 
@@ -236,15 +237,9 @@ Before getting started you'll need:
 
 ### X Developer Account and API Credentials
 
-You need an X Developer Account with at least the Pay-Per-Use tier. The main steps are:
+You need an X Developer Account with at least the Pay-Per-Use tier, and four OAuth 1.0a credentials (Consumer Key, Consumer Secret, Access Token, Access Token Secret).
 
-1. Go to the [X Developer Portal](https://developer.x.com/) and sign up or log in
-2. Create a new Project and App (or use an existing one)
-3. Select the **Pay-Per-Use** tier (required for Account Activity API access and DM read/write)
-4. Enable **Read and Write** permissions and **Direct Messages** access
-5. Generate all four OAuth 1.0a credentials: Consumer Key, Consumer Secret, Access Token, and Access Token Secret
-
-See the [X Setup Guide](https://github.com/aws-samples/sample-amazon-connect-social-integration/blob/main/x_setup.md) for detailed step-by-step instructions.
+See the [X Platform Setup Guide](https://github.com/aws-samples/sample-amazon-connect-social-integration/blob/main/x_setup.md) for detailed step-by-step instructions on creating your app, configuring permissions, and generating credentials.
 
 ⚠️ Important: The free tier does not include webhook-based DM delivery. You need the Pay-Per-Use tier.
 
@@ -288,57 +283,15 @@ Follow the instructions in the [CDK Deployment Guide](https://github.com/aws-sam
 
 ## Post-deployment Configuration
 
-### Step 1: Update the X API Credentials in Secrets Manager
+After deployment, three configuration steps are needed:
 
-The stack creates a Secrets Manager secret named [`x-dm-credentials`](https://console.aws.amazon.com/secretsmanager/secret?name=x-dm-credentials) with placeholder values. Update it with your actual X API credentials as a JSON object:
+1. **Update X API Credentials** — The stack creates a Secrets Manager secret named `x-dm-credentials` with placeholder values. Update it with your actual Consumer Key, Consumer Secret, Access Token, and Access Token Secret.
 
-```json
-{
-  "consumer_key": "YOUR_CONSUMER_KEY",
-  "consumer_secret": "YOUR_CONSUMER_SECRET",
-  "access_token": "YOUR_ACCESS_TOKEN",
-  "access_token_secret": "YOUR_ACCESS_TOKEN_SECRET"
-}
-```
+2. **Update SSM Configuration** — Update the SSM parameter `/x/dm/config` with your Amazon Connect `instance_id`, `contact_flow_id`, and your X account's numeric `x_account_id`.
 
-### Step 2: Update the SSM Configuration Parameter
+3. **Register the Webhook and Subscribe** — Register your deployed API Gateway URL with the X Account Activity API and subscribe your business account to receive DM events. The Inbound Handler responds to CRC challenges automatically.
 
-After deployment, go to [AWS Systems Manager - Parameter Store](https://console.aws.amazon.com/systems-manager/parameters) and update the SSM parameter `/x/dm/config` with your Amazon Connect and X details:
-
-| Parameter | Description |
-|---|---|
-| `instance_id` | Your Amazon Connect Instance ID |
-| `contact_flow_id` | The ID of the Inbound Contact Flow for chat |
-| `x_account_id` | Your X account's numeric user ID (the business account that will receive DMs) |
-
-To find your `x_account_id`:
-
-```bash
-curl -X GET "https://api.x.com/2/users/by/username/YOUR_X_HANDLE" \
-  -H "Authorization: Bearer YOUR_BEARER_TOKEN"
-```
-
-Or use a third-party lookup tool — search for "X/Twitter user ID lookup" to find your numeric ID from your @handle.
-
-### Step 3: Register the Webhook with X Account Activity API
-
-1. Find your deployed webhook URL in the [SSM parameter](https://console.aws.amazon.com/systems-manager/parameters) `/x/dm/webhook/url`
-2. Register the webhook URL with the X Account Activity API v2:
-
-```bash
-curl -X POST "https://api.x.com/1.1/account_activity/all/YOUR_ENV_NAME/webhooks.json?url=YOUR_WEBHOOK_URL" \
-  -H "Authorization: OAuth ..."
-```
-
-3. X will immediately send a CRC challenge (GET request) to your webhook URL. The Inbound Handler will respond with the HMAC-SHA256 hash automatically
-4. Subscribe your app user to the webhook:
-
-```bash
-curl -X POST "https://api.x.com/1.1/account_activity/all/YOUR_ENV_NAME/subscriptions.json" \
-  -H "Authorization: OAuth ..."
-```
-
-> **Tip:** You can use [Tweepy](https://docs.tweepy.org/) or [Postman](https://www.postman.com/) to simplify OAuth 1.0a signed requests for webhook registration.
+For detailed instructions on each step, including how to find your `x_account_id` and register the webhook, see the [project README](https://github.com/aws-samples/sample-amazon-connect-social-integration/tree/main/x-dm-connect-chat) and the [X Platform Setup Guide](https://github.com/aws-samples/sample-amazon-connect-social-integration/blob/main/x_setup.md).
 
 ## Testing
 
